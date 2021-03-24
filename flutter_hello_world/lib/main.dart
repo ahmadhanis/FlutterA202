@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  String name = "";
-  TextEditingController _namecontroller = new TextEditingController();
+class MyApp extends StatelessWidget {
+  final TextEditingController nameController = new TextEditingController();
+  final ValueNotifier<String> nameNotifier = new ValueNotifier('');
 
   @override
   Widget build(BuildContext context) {
@@ -21,19 +16,30 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Center(
           child: Container(
+            width: 350,
             child: Column(
               children: [
-                Text("Please enter your name"),
-                Container(
-                    width: 200,
-                    child: TextField(
-                      controller: _namecontroller,
-                    )),
-                RaisedButton(
-                  child: Text("Press ME"),
-                  onPressed: printmyName,
+                Text("Please enter name "),
+                SizedBox(
+                  height: 10,
                 ),
-                Text("Your Name " + name),
+                TextField(
+                  controller: nameController,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                // ignore: deprecated_member_use
+                RaisedButton(
+                  child: Text("Press Me"),
+                  onPressed: pressMe,
+                ),
+                ValueListenableBuilder(
+                  valueListenable:nameNotifier,
+                  builder:(context,name,child){
+                    return Text("Welcome "+name);
+                  }
+                ),
               ],
             ),
           ),
@@ -42,10 +48,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  printmyName() {
-    setState(() {
-      name = _namecontroller.text.toString();
-      print(name);
-    });
+  void pressMe() {
+    nameNotifier.value = nameController.text;
   }
 }
