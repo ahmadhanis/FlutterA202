@@ -39,6 +39,9 @@ class _MyAppState extends State<MyApp> {
   Future<void> pressMe() async {
     String _email = "test@email.com";
     String _password = "abc123";
+    if (_email.isEmpty){
+      
+    }
     var url = Uri.parse(
         'https://cors-anywhere.herokuapp.com/http://sopmathpowy2.com/XinYin/hello_website/php/login_user.php');
     var response = await http.post(url, body: {
