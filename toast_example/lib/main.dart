@@ -10,7 +10,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   TextEditingController textEditingController = new TextEditingController();
-  String yourString = "got value";
+  String yourString = "";
 
   @override
   Widget build(BuildContext context) {
@@ -47,14 +47,17 @@ class _MyAppState extends State<MyApp> {
   }
 
   void pressMe() {
-    Fluttertoast.showToast(
-        msg: "This is Center Short Toast",
+    setState(() {
+      yourString = textEditingController.text;
+      Fluttertoast.showToast(
+        msg: "You entered $yourString",
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.TOP,
+        gravity: ToastGravity.CENTER,
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.red,
         textColor: Colors.white,
         fontSize: 16.0
     );
+    });
   }
 }

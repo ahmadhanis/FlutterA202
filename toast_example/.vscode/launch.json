@@ -7,7 +7,7 @@
         {
             "name": "toast_example",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
         }
     ]
 }
