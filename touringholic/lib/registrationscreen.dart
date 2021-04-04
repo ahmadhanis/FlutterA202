@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:touringholic/loginscreen.dart';
 
-import 'registrationscreen.dart';
-
-class LoginScreen extends StatefulWidget {
+class RegistrationScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _RegistrationScreenState createState() => _RegistrationScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegistrationScreenState extends State<RegistrationScreen> {
   bool _rememberMe = false;
   @override
   Widget build(BuildContext context) {
@@ -31,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     children: [
                       Text(
-                        'Login',
+                        'Registration',
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -46,6 +45,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextField(
                         decoration: InputDecoration(
                             labelText: 'Password', icon: Icon(Icons.lock)),
+                        obscureText: true,
+                      ),
+                      TextField(
+                        decoration: InputDecoration(
+                            labelText: 'Enter Password Again', icon: Icon(Icons.lock)),
                         obscureText: true,
                       ),
                       SizedBox(height: 5),
@@ -65,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           minWidth: 200,
                           height: 50,
-                          child: Text('Login',
+                          child: Text('Register',
                               style: TextStyle(
                                 color: Colors.white,
                               )),
@@ -77,15 +81,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               GestureDetector(
-                child: Text("Register New Account",
+                child: Text("Already Register?",
                     style: TextStyle(fontSize: 16)),
-                onTap: _registerNewUser,
+                onTap: _alreadyRegister,
               ),
               SizedBox(height: 5),
-              GestureDetector(
-                child: Text("Forgot Password", style: TextStyle(fontSize: 16)),
-                onTap: _registerNewUser,
-              )
+              
             ],
           ),
         )),
@@ -102,8 +103,9 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  void _registerNewUser() {
+
+  void _alreadyRegister() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (content) => RegistrationScreen()));
+        context, MaterialPageRoute(builder: (content) => LoginScreen()));
   }
 }
