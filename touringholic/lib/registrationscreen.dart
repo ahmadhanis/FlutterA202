@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:touringholic/loginscreen.dart';
 
+import 'theme.dart';
+
 class RegistrationScreen extends StatefulWidget {
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
@@ -11,6 +13,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: CustomTheme.darktheme,
       title: 'Material App',
       home: Scaffold(
         body: Center(
@@ -49,7 +52,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       TextField(
                         decoration: InputDecoration(
-                            labelText: 'Enter Password Again', icon: Icon(Icons.lock)),
+                            labelText: 'Enter Password Again',
+                            icon: Icon(Icons.lock)),
                         obscureText: true,
                       ),
                       SizedBox(height: 5),
@@ -74,19 +78,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 color: Colors.white,
                               )),
                           onPressed: _onLogin,
-                          color: Colors.red),
+                          color: Color.fromRGBO(191, 30, 46, 50)),
                       SizedBox(height: 10),
                     ],
                   ),
                 ),
               ),
               GestureDetector(
-                child: Text("Already Register?",
-                    style: TextStyle(fontSize: 16)),
+                child:
+                    Text("Already Register?", style: TextStyle(fontSize: 16)),
                 onTap: _alreadyRegister,
               ),
               SizedBox(height: 5),
-              
             ],
           ),
         )),
@@ -102,7 +105,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       _rememberMe = value;
     });
   }
-
 
   void _alreadyRegister() {
     Navigator.push(

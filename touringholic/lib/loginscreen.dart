@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'registrationscreen.dart';
+import 'theme.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -12,7 +12,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Material App',
+      theme: CustomTheme.darktheme,
+      title: 'Touring Holic',
       home: Scaffold(
         body: Center(
             child: SingleChildScrollView(
@@ -70,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: Colors.white,
                               )),
                           onPressed: _onLogin,
-                          color: Colors.red),
+                          color: Color.fromRGBO(191, 30, 46, 50)),
                       SizedBox(height: 10),
                     ],
                   ),
@@ -81,10 +82,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(fontSize: 16)),
                 onTap: _registerNewUser,
               ),
-              SizedBox(height: 5),
+              SizedBox(height: 10),
               GestureDetector(
                 child: Text("Forgot Password", style: TextStyle(fontSize: 16)),
-                onTap: _registerNewUser,
+                onTap: _forgotPassword,
               )
             ],
           ),
@@ -105,5 +106,70 @@ class _LoginScreenState extends State<LoginScreen> {
   void _registerNewUser() {
     Navigator.push(
         context, MaterialPageRoute(builder: (content) => RegistrationScreen()));
+  }
+
+  void _forgotPassword() {
+     TextEditingController phoneController = TextEditingController();
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text(
+            "Forgot Password?",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          content: new Container(
+            height: 100,
+            child: Column(
+              children: <Widget>[
+                Text(
+                  "Enter your recovery email",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                TextField(
+                    decoration: InputDecoration(
+                  labelText: 'Email',
+                  icon: Icon(Icons.email),
+                ))
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text(
+                "Yes",
+                style: TextStyle(
+                  color: Color.fromRGBO(101, 255, 218, 50),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                print(
+                  phoneController.text,
+                );
+              },
+            ),
+            new FlatButton(
+              child: new Text(
+                "No",
+                style: TextStyle(
+                  color: Color.fromRGBO(101, 255, 218, 50),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
