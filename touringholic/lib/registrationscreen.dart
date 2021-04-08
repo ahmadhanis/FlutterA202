@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:touringholic/loginscreen.dart';
-
-import 'theme.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 
 class RegistrationScreen extends StatefulWidget {
   @override
@@ -10,10 +10,13 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   bool _rememberMe = false;
+  TextEditingController _emailController = new TextEditingController();
+  TextEditingController _passwordControllera = new TextEditingController();
+  TextEditingController _passwordControllerb = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: CustomTheme.darktheme,
       title: 'Material App',
       home: Scaffold(
         body: Center(
@@ -41,16 +44,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                       ),
                       TextField(
+                        controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                             labelText: 'Email', icon: Icon(Icons.email)),
                       ),
                       TextField(
+                        controller: _passwordControllera,
                         decoration: InputDecoration(
                             labelText: 'Password', icon: Icon(Icons.lock)),
                         obscureText: true,
                       ),
                       TextField(
+                        controller: _passwordControllerb,
                         decoration: InputDecoration(
                             labelText: 'Enter Password Again',
                             icon: Icon(Icons.lock)),
@@ -77,7 +83,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               style: TextStyle(
                                 color: Colors.white,
                               )),
-                          onPressed: _onLogin,
+                          onPressed: _onRegister,
                           color: Color.fromRGBO(191, 30, 46, 50)),
                       SizedBox(height: 10),
                     ],
@@ -97,8 +103,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  void _onLogin() {}
-
   void _onChange(bool value) {
     print(value);
     setState(() {
@@ -109,5 +113,76 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   void _alreadyRegister() {
     Navigator.push(
         context, MaterialPageRoute(builder: (content) => LoginScreen()));
+  }
+
+  void _onRegister() {
+    String _email = _emailController.text.toString();
+    String _passworda = _passwordControllera.text.toString();
+    String _passwordb = _passwordControllerb.text.toString();
+
+    if (_email.isEmpty || _passworda.isEmpty || _passwordb.isEmpty) {
+      Fluttertoast.showToast(
+          msg: "Email/password is empty",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Color.fromRGBO(191, 30, 46, 50),
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    }
+    //checking the data integrity
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            title: Text("Register new user"),
+            content: Text("Are your sure?"),
+            actions: [
+              TextButton(
+                child: Text("Ok"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _registerUser(_email, _passworda);
+                },
+              ),
+              TextButton(
+                  child: Text("Cancel"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  }),
+            ],
+          );
+        });
+  }
+
+  void _registerUser(String email, String password) {
+    http.post(
+        Uri.parse("https://slumberjer.com/touringholic/php/register_user.php"),
+        body: {"email": email, "password": password}).then((response) {
+      print(response.body);
+      if (response.body=="success"){
+         Fluttertoast.showToast(
+          msg: "Registration Success",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Color.fromRGBO(191, 30, 46, 50),
+          textColor: Colors.white,
+          fontSize: 16.0);
+      }else{
+         Fluttertoast.showToast(
+          msg: "Registration Failed",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Color.fromRGBO(191, 30, 46, 50),
+          textColor: Colors.white,
+          fontSize: 16.0);
+      }
+    });
   }
 }
