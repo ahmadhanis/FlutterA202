@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'mainscreen.dart';
 import 'registrationscreen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -106,7 +108,36 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _onLogin() {}
+  void _onLogin() {
+    String _email = _emailController.text.toString();
+    String _password = _passwordController.text.toString();
+    http.post(
+        Uri.parse("https://slumberjer.com/touringholic/php/login_user.php"),
+        body: {"email": _email, "password": _password}).then((response) {
+      print(response.body);
+      if (response.body == "success") {
+        Fluttertoast.showToast(
+            msg: "Login Success",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color.fromRGBO(191, 30, 46, 50),
+            textColor: Colors.white,
+            fontSize: 16.0);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (content) => MainScreen()));
+      } else {
+        Fluttertoast.showToast(
+            msg: "Login  Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color.fromRGBO(191, 30, 46, 50),
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
+  }
 
   void _registerNewUser() {
     Navigator.push(
@@ -114,6 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _forgotPassword() {
+    TextEditingController _useremailcontroller = TextEditingController();
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -125,6 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Text("Enter your recovery email"),
                     TextField(
+                      controller: _useremailcontroller,
                       decoration: InputDecoration(
                           labelText: 'Email', icon: Icon(Icons.email)),
                     )
@@ -133,7 +166,10 @@ class _LoginScreenState extends State<LoginScreen> {
             actions: [
               TextButton(
                 child: Text("Submit"),
-                onPressed: () {},
+                onPressed: () {
+                  print(_useremailcontroller.text);
+                  _resetPassword(_useremailcontroller.text);
+                },
               ),
               TextButton(
                   child: Text("Cancel"),
@@ -211,6 +247,33 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       _emailController.text = _email;
       _passwordController.text = _password;
+    });
+  }
+
+  void _resetPassword(String emailreset) {
+    http.post(
+        Uri.parse("https://slumberjer.com/touringholic/php/reset_user.php"),
+        body: {"email": emailreset}).then((response) {
+      print(response.body);
+      if (response.body == "success") {
+        Fluttertoast.showToast(
+            msg: "Check your email",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color.fromRGBO(191, 30, 46, 50),
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color.fromRGBO(191, 30, 46, 50),
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
     });
   }
 }

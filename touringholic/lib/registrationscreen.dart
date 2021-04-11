@@ -166,7 +166,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       print(response.body);
       if (response.body=="success"){
          Fluttertoast.showToast(
-          msg: "Registration Success",
+          msg: "Registration Success. Please check your email for verification link",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
