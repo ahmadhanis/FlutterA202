@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:touringholic/model/user.dart';
 import 'mainscreen.dart';
 import 'registrationscreen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -15,7 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
   SharedPreferences prefs;
-
+  double screenHeight, screenWidth;
   @override
   void initState() {
     loadPref();
@@ -24,87 +25,85 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Touring Holic',
-      home: Scaffold(
-        body: Center(
-            child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                  margin: EdgeInsets.fromLTRB(70, 50, 70, 10),
-                  child:
-                      Image.asset('assets/images/touringholic.png', scale: 2)),
-              SizedBox(height: 5),
-              Card(
-                margin: EdgeInsets.fromLTRB(30, 5, 30, 15),
-                elevation: 10,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Login',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24,
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
+    return Scaffold(
+      body: Center(
+          child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+                margin: EdgeInsets.fromLTRB(70, 50, 70, 10),
+                child: Image.asset('assets/images/touringholic.png', scale: 2)),
+            SizedBox(height: 5),
+            Card(
+              margin: EdgeInsets.fromLTRB(30, 5, 30, 15),
+              elevation: 10,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+                child: Column(
+                  children: [
+                    Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                      ),
+                    ),
+                    TextField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                          labelText: 'Email', icon: Icon(Icons.email)),
+                    ),
+                    TextField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                          labelText: 'Password', icon: Icon(Icons.lock)),
+                      obscureText: true,
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Checkbox(
+                            value: _rememberMe,
+                            onChanged: (bool value) {
+                              _onChange(value);
+                            }),
+                        Text("Remember Me")
+                      ],
+                    ),
+                    MaterialButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                      ),
-                      TextField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                            labelText: 'Email', icon: Icon(Icons.email)),
-                      ),
-                      TextField(
-                        controller: _passwordController,
-                        decoration: InputDecoration(
-                            labelText: 'Password', icon: Icon(Icons.lock)),
-                        obscureText: true,
-                      ),
-                      SizedBox(height: 5),
-                      Row(
-                        children: [
-                          Checkbox(
-                              value: _rememberMe,
-                              onChanged: (bool value) {
-                                _onChange(value);
-                              }),
-                          Text("Remember Me")
-                        ],
-                      ),
-                      MaterialButton(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          minWidth: 200,
-                          height: 50,
-                          child: Text('Login',
-                              style: TextStyle(
-                                color: Colors.white,
-                              )),
-                          onPressed: _onLogin,
-                          color: Color.fromRGBO(191, 30, 46, 50)),
-                      SizedBox(height: 10),
-                    ],
-                  ),
+                        minWidth: screenWidth,
+                        height: 50,
+                        child: Text('Login',
+                            style: TextStyle(
+                              color: Colors.white,
+                            )),
+                        onPressed: _onLogin,
+                        color: Color.fromRGBO(191, 30, 46, 50)),
+                    SizedBox(height: 10),
+                  ],
                 ),
               ),
-              GestureDetector(
-                child: Text("Register New Account",
-                    style: TextStyle(fontSize: 16)),
-                onTap: _registerNewUser,
-              ),
-              SizedBox(height: 10),
-              GestureDetector(
-                child: Text("Forgot Password", style: TextStyle(fontSize: 16)),
-                onTap: _forgotPassword,
-              )
-            ],
-          ),
-        )),
-      ),
+            ),
+            GestureDetector(
+              child:
+                  Text("Register New Account", style: TextStyle(fontSize: 16)),
+              onTap: _registerNewUser,
+            ),
+            SizedBox(height: 10),
+            GestureDetector(
+              child: Text("Forgot Password", style: TextStyle(fontSize: 16)),
+              onTap: _forgotPassword,
+            )
+          ],
+        ),
+      )),
     );
   }
 
@@ -115,26 +114,27 @@ class _LoginScreenState extends State<LoginScreen> {
         Uri.parse("https://slumberjer.com/touringholic/php/login_user.php"),
         body: {"email": _email, "password": _password}).then((response) {
       print(response.body);
-      if (response.body == "success") {
+      if (response.body == "failed") {
         Fluttertoast.showToast(
-            msg: "Login Success",
+            msg: "Login Failed",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             backgroundColor: Color.fromRGBO(191, 30, 46, 50),
             textColor: Colors.white,
             fontSize: 16.0);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (content) => MainScreen()));
       } else {
-        Fluttertoast.showToast(
-            msg: "Login  Failed",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Color.fromRGBO(191, 30, 46, 50),
-            textColor: Colors.white,
-            fontSize: 16.0);
+        List userdata = response.body.split(",");
+        User user = User(
+            email: _email,
+            password: _password,
+            name: userdata[1],
+            datereg: userdata[2],
+            rating: userdata[3],
+            credit: userdata[4],
+            status: userdata[5]);
+        Navigator.push(context,
+            MaterialPageRoute(builder: (content) => MainScreen(user: user)));
       }
     });
   }

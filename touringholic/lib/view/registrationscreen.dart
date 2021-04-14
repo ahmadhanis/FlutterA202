@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:touringholic/loginscreen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'loginscreen.dart';
 
 class RegistrationScreen extends StatefulWidget {
   @override
@@ -9,16 +9,17 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  bool _rememberMe = false;
+  // bool _rememberMe = false;
+  TextEditingController _nameController = new TextEditingController();
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _passwordControllera = new TextEditingController();
   TextEditingController _passwordControllerb = new TextEditingController();
-
+  double screenHeight, screenWidth;
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Material App',
-      home: Scaffold(
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
+    return  Scaffold(
         body: Center(
             child: SingleChildScrollView(
           child: Column(
@@ -44,6 +45,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                       ),
                       TextField(
+                        controller: _nameController,
+                        keyboardType: TextInputType.name,
+                        decoration: InputDecoration(
+                            labelText: 'Name', icon: Icon(Icons.person)),
+                      ),
+                      TextField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
@@ -62,22 +69,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             icon: Icon(Icons.lock)),
                         obscureText: true,
                       ),
-                      SizedBox(height: 5),
-                      Row(
-                        children: [
-                          Checkbox(
-                              value: _rememberMe,
-                              onChanged: (bool value) {
-                                _onChange(value);
-                              }),
-                          Text("Remember Me")
-                        ],
-                      ),
+
+                      SizedBox(height: 10),
                       MaterialButton(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
-                          minWidth: 200,
+                           minWidth: screenWidth,
                           height: 50,
                           child: Text('Register',
                               style: TextStyle(
@@ -95,20 +93,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     Text("Already Register?", style: TextStyle(fontSize: 16)),
                 onTap: _alreadyRegister,
               ),
-              SizedBox(height: 5),
+              SizedBox(height: 15),
             ],
           ),
         )),
-      ),
     );
   }
 
-  void _onChange(bool value) {
-    print(value);
-    setState(() {
-      _rememberMe = value;
-    });
-  }
+
 
   void _alreadyRegister() {
     Navigator.push(
@@ -116,11 +108,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void _onRegister() {
+    String _name = _nameController.text.toString();
     String _email = _emailController.text.toString();
     String _passworda = _passwordControllera.text.toString();
     String _passwordb = _passwordControllerb.text.toString();
-
-    if (_email.isEmpty || _passworda.isEmpty || _passwordb.isEmpty) {
+    
+    if (_name.isEmpty || _email.isEmpty || _passworda.isEmpty || _passwordb.isEmpty) {
       Fluttertoast.showToast(
           msg: "Email/password is empty",
           toastLength: Toast.LENGTH_SHORT,
@@ -146,7 +139,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 child: Text("Ok"),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _registerUser(_email, _passworda);
+                  _registerUser(_name, _email, _passworda);
                 },
               ),
               TextButton(
@@ -159,29 +152,36 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         });
   }
 
-  void _registerUser(String email, String password) {
+  void _registerUser(String name, String email, String password) {
     http.post(
         Uri.parse("https://slumberjer.com/touringholic/php/register_user.php"),
-        body: {"email": email, "password": password}).then((response) {
+        body: {
+          "name": name,
+          "email": email,
+          "password": password
+        }).then((response) {
       print(response.body);
-      if (response.body=="success"){
-         Fluttertoast.showToast(
-          msg: "Registration Success. Please check your email for verification link",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Color.fromRGBO(191, 30, 46, 50),
-          textColor: Colors.white,
-          fontSize: 16.0);
-      }else{
-         Fluttertoast.showToast(
-          msg: "Registration Failed",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Color.fromRGBO(191, 30, 46, 50),
-          textColor: Colors.white,
-          fontSize: 16.0);
+      if (response.body == "success") {
+        Fluttertoast.showToast(
+            msg:
+                "Registration Success. Please check your email for verification link",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color.fromRGBO(191, 30, 46, 50),
+            textColor: Colors.white,
+            fontSize: 16.0);
+        FocusScope.of(context).unfocus();
+        _passwordControllerb.clear();
+      } else {
+        Fluttertoast.showToast(
+            msg: "Registration Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Color.fromRGBO(191, 30, 46, 50),
+            textColor: Colors.white,
+            fontSize: 16.0);
       }
     });
   }
