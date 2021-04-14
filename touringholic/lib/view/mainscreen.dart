@@ -16,7 +16,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('MainScreen'),
+        title: Text('Your Dashboard'),
       ),
       drawer: MyDrawer(user: widget.user),
       body: Center(

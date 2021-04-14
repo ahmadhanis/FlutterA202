@@ -82,7 +82,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 color: Colors.white,
                               )),
                           onPressed: _onRegister,
-                          color: Color.fromRGBO(191, 30, 46, 50)),
+                          color: Colors.red),
                       SizedBox(height: 10),
                     ],
                   ),
@@ -119,7 +119,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
-          backgroundColor: Color.fromRGBO(191, 30, 46, 50),
+          backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
       return;
@@ -168,7 +168,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
-            backgroundColor: Color.fromRGBO(191, 30, 46, 50),
+            backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
         FocusScope.of(context).unfocus();
@@ -179,7 +179,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
-            backgroundColor: Color.fromRGBO(191, 30, 46, 50),
+            backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
       }

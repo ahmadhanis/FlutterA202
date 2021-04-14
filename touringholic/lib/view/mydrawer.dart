@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:touringholic/model/user.dart';
-import 'touringgram.dart';
+import 'package:touringholic/view/mainscreen.dart';
+import 'touringgramscreen.dart';
 
 class MyDrawer extends StatefulWidget {
   final User user;
-  
+
   const MyDrawer({Key key, this.user}) : super(key: key);
   @override
   _MyDrawerState createState() => _MyDrawerState();
@@ -37,13 +38,23 @@ class _MyDrawerState extends State<MyDrawer> {
             title: Text("Dashboard"),
             onTap: () {
               Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (content) => MainScreen(
+                            user: widget.user,
+                          )));
             }),
         ListTile(
             title: Text("TouringGram"),
             onTap: () {
               Navigator.pop(context);
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (content) => TouringGram(user: widget.user,)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (content) => TouringGramScreen(
+                            user: widget.user,
+                          )));
             }),
         ListTile(
             title: Text("Preloved"),

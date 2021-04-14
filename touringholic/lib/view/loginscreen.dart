@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: Colors.white,
                             )),
                         onPressed: _onLogin,
-                        color: Color.fromRGBO(191, 30, 46, 50)),
+                        color: Colors.red),
                     SizedBox(height: 10),
                   ],
                 ),
@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
-            backgroundColor: Color.fromRGBO(191, 30, 46, 50),
+            backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
       } else {
