@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:touringholic/model/user.dart';
 import 'package:touringholic/view/mydrawer.dart';
+import 'package:touringholic/view/tabnewgram.dart';
+import 'package:touringholic/view/tabyourgrams.dart';
+
+import 'tablatestgrams.dart';
 
 class TouringGramScreen extends StatefulWidget {
   final User user;
@@ -13,7 +17,15 @@ class TouringGramScreen extends StatefulWidget {
 
 class _TouringGramScreenState extends State<TouringGramScreen> {
   int _currentIndex = 0;
-  final List<Widget> _children = [];
+  List<Widget> tabchildren;
+  String maintitle = "TouringGram";
+
+  @override
+  void initState() {
+    super.initState();
+    tabchildren = [TabLatestGrams(), TabNewGram(), TabYourGrams()];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,11 +35,8 @@ class _TouringGramScreenState extends State<TouringGramScreen> {
           unselectedItemColor: Colors.red.withOpacity(.60),
           selectedFontSize: 14,
           unselectedFontSize: 14,
-          onTap: (value) {
-            setState(() {
-              _currentIndex = value;
-            });
-          },
+          currentIndex: _currentIndex, //
+          onTap: onTabTapped,
           items: [
             BottomNavigationBarItem(
               label: 'Latest Grams',
@@ -44,11 +53,22 @@ class _TouringGramScreenState extends State<TouringGramScreen> {
         title: Text('Touring Gram'),
       ),
       drawer: MyDrawer(user: widget.user),
-      body: Center(
-        child: Container(
-          child: Text('Hello World'),
-        ),
-      ),
+      body:tabchildren[_currentIndex],
     );
+  }
+
+  void onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+      if (_currentIndex == 0) {
+        maintitle = "TouringGram";
+      }
+      if (_currentIndex == 1) {
+        maintitle = "New Gram";
+      }
+      if (_currentIndex == 2) {
+        maintitle = "Your Grams";
+      }
+    });
   }
 }

@@ -24,20 +24,17 @@ class _MyDrawerState extends State<MyDrawer> {
                 Theme.of(context).platform == TargetPlatform.android
                     ? Colors.white
                     : Colors.red,
-            child: Text(
-              widget.user.email.toString().substring(0, 1).toUpperCase(),
-              style: TextStyle(fontSize: 40),
-            ),
             backgroundImage: AssetImage(
               "assets/images/profilea.png",
             ),
           ),
-          accountName: null,
+          accountName: Text(widget.user.name),
         ),
         ListTile(
             title: Text("Dashboard"),
             onTap: () {
               Navigator.pop(context);
+              
               Navigator.push(
                   context,
                   MaterialPageRoute(
