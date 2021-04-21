@@ -3,7 +3,8 @@ import 'package:touringholic/model/user.dart';
 import 'package:touringholic/view/mydrawer.dart';
 import 'package:touringholic/view/tabnewgram.dart';
 import 'package:touringholic/view/tabyourgrams.dart';
-
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'mainscreen.dart';
 import 'tablatestgrams.dart';
 
 class TouringGramScreen extends StatefulWidget {
@@ -16,7 +17,7 @@ class TouringGramScreen extends StatefulWidget {
 }
 
 class _TouringGramScreenState extends State<TouringGramScreen> {
-  int _currentIndex = 0;
+  int _currentIndex = 1;
   List<Widget> tabchildren;
   String maintitle = "TouringGram";
 
@@ -28,32 +29,25 @@ class _TouringGramScreenState extends State<TouringGramScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.red,
-          unselectedItemColor: Colors.red.withOpacity(.60),
-          selectedFontSize: 14,
-          unselectedFontSize: 14,
-          currentIndex: _currentIndex, //
-          onTap: onTabTapped,
-          items: [
-            BottomNavigationBarItem(
-              label: 'Latest Grams',
-              icon: Icon(Icons.new_releases),
-            ),
-            BottomNavigationBarItem(
-              label: 'New Gram',
-              icon: Icon(Icons.camera),
-            ),
-            BottomNavigationBarItem(
-                label: 'Your Gram', icon: Icon(Icons.favorite_rounded)),
-          ]),
-      appBar: AppBar(
-        title: Text('Touring Gram'),
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        bottomNavigationBar: ConvexAppBar(
+            style: TabStyle.flip,
+            initialActiveIndex: _currentIndex, //
+            onTap: onTabTapped,
+            backgroundColor: Theme.of(context).accentColor,
+            items: [
+              TabItem(icon: Icons.new_releases),
+              TabItem(icon: Icons.camera),
+              TabItem(icon: Icons.list),
+            ]),
+        appBar: AppBar(
+          title: Text('Touring Gram'),
+        ),
+        drawer: MyDrawer(user: widget.user),
+        body: tabchildren[_currentIndex],
       ),
-      drawer: MyDrawer(user: widget.user),
-      body:tabchildren[_currentIndex],
     );
   }
 
@@ -70,5 +64,15 @@ class _TouringGramScreenState extends State<TouringGramScreen> {
         maintitle = "Your Grams";
       }
     });
+  }
+
+  Future<bool> _onBackPressed() async {
+    Navigator.pop(
+        context,
+        MaterialPageRoute(
+            builder: (content) => MainScreen(
+                  user: widget.user,
+                )));
+    return false;
   }
 }

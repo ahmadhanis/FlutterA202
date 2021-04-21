@@ -169,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
         pr.hide().then((isHidden) {
           print(isHidden);
         });
-        Navigator.pop(context);
+
         Navigator.push(context,
             MaterialPageRoute(builder: (content) => MainScreen(user: user)));
       }
@@ -332,7 +332,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _resetPassword(String emailreset) {
     http.post(
         Uri.parse(
-            "https://slumberjer.com/touringholic/php/forgot_password.php"),
+            "https://slumberjer.com/touringholic/php/insert_gram.php"),
         body: {"email": emailreset}).then((response) {
       print(response.body);
       if (response.body == "success") {

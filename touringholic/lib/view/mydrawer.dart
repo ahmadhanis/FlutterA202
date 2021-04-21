@@ -34,7 +34,7 @@ class _MyDrawerState extends State<MyDrawer> {
             title: Text("Dashboard"),
             onTap: () {
               Navigator.pop(context);
-              
+              Navigator.pop(context);
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -44,8 +44,10 @@ class _MyDrawerState extends State<MyDrawer> {
             }),
         ListTile(
             title: Text("TouringGram"),
+            trailing: Icon(Icons.arrow_forward),
             onTap: () {
               Navigator.pop(context);
+
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -55,26 +57,31 @@ class _MyDrawerState extends State<MyDrawer> {
             }),
         ListTile(
             title: Text("Preloved"),
+            trailing: Icon(Icons.arrow_forward),
             onTap: () {
               Navigator.pop(context);
             }),
         ListTile(
             title: Text("My Tour"),
+            trailing: Icon(Icons.arrow_forward),
             onTap: () {
               Navigator.pop(context);
             }),
         ListTile(
             title: Text("Messaging"),
+            trailing: Icon(Icons.arrow_forward),
             onTap: () {
               Navigator.pop(context);
             }),
         ListTile(
             title: Text("My Profile"),
+            trailing: Icon(Icons.arrow_forward),
             onTap: () {
               Navigator.pop(context);
             }),
         ListTile(
             title: Text("Logout"),
+            trailing: Icon(Icons.arrow_forward),
             onTap: () {
               Navigator.pop(context);
             })

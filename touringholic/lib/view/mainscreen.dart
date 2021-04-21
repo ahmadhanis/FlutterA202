@@ -89,12 +89,12 @@ class _MainScreenState extends State<MainScreen> {
               // progressDialog
             ],
             staggeredTiles: [
-              StaggeredTile.extent(2, 130.0),
+              StaggeredTile.extent(2, 150.0),
               StaggeredTile.extent(1, 150.0),
               StaggeredTile.extent(1, 150.0),
               StaggeredTile.extent(1, 150.0),
               StaggeredTile.extent(1, 150.0),
-              StaggeredTile.extent(2, 200.0)
+              StaggeredTile.extent(1, 150.0)
             ],
           ),
         ),
