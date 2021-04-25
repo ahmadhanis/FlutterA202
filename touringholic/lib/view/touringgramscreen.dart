@@ -24,7 +24,7 @@ class _TouringGramScreenState extends State<TouringGramScreen> {
   @override
   void initState() {
     super.initState();
-    tabchildren = [TabLatestGrams(), TabNewGram(), TabYourGrams()];
+    tabchildren = [TabLatestGrams(), TabNewGram(user: widget.user), TabYourGrams(user: widget.user)];
   }
 
   @override

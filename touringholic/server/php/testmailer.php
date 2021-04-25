@@ -13,10 +13,10 @@ try {
     //Server settings
     $mail->SMTPDebug = 0;                      //Enable verbose debug output
     $mail->isSMTP();                                            //Send using SMTP
-    $mail->Host       = '';                     //Set the SMTP server to send through
+    $mail->Host       = 'mail.slumberjer.com';                     //Set the SMTP server to send through
     $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-    $mail->Username   = '';                     //SMTP username
-    $mail->Password   = '';                               //SMTP password
+    $mail->Username   = 'touringholic@slumberjer.com';                     //SMTP username
+    $mail->Password   = 'T0MizfNmCddW';                               //SMTP password
     $mail->SMTPSecure = 'tls';         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
     $mail->Port       = 587;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
 

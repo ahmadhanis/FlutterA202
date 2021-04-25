@@ -18,7 +18,7 @@ $rating = "0";
 $credit = "0";
 $status = "active";
 
-$sqlregister = "INSERT INTO tbl_user(name,user_email,password,otp,rating,credit,status) VALUES('$name','$user_email','$passha1','$otp','$rating','$credit','$status')";
+$sqlregister = "INSERT INTO tbl_user(user_name,user_email,password,otp,rating,credit,status) VALUES('$name','$user_email','$passha1','$otp','$rating','$credit','$status')";
 if ($conn->query($sqlregister) === TRUE){
     echo "success";
     sendEmail($otp,$user_email);
@@ -30,10 +30,10 @@ function sendEmail($otp,$user_email){
     $mail = new PHPMailer(true);
     $mail->SMTPDebug = 0;                                               //Disable verbose debug output
     $mail->isSMTP();                                                    //Send using SMTP
-    $mail->Host       = '';                          //Set the SMTP server to send through
+    $mail->Host       = 'mail.slumberjer.com';                          //Set the SMTP server to send through
     $mail->SMTPAuth   = true;                                           //Enable SMTP authentication
-    $mail->Username   = '';                  //SMTP username
-    $mail->Password   = '';                                 //SMTP password
+    $mail->Username   = 'touringholic@slumberjer.com';                  //SMTP username
+    $mail->Password   = 'T0MizfNmCddW';                                 //SMTP password
     $mail->SMTPSecure = 'tls';         
     $mail->Port       = 587;
     
@@ -51,6 +51,8 @@ function sendEmail($otp,$user_email){
     $mail->Body    = $message;
     $mail->send();
 }
+
+
 
 
 ?>

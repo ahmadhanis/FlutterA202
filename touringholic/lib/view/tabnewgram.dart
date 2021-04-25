@@ -258,15 +258,16 @@ class _TabNewGramState extends State<TabNewGram> {
   void _postuserGram() {
     String base64Image = base64Encode(_image.readAsBytesSync());
     String desc = _descCtrl.text.toString();
+    print(desc);
     http.post(
-        Uri.parse("https://slumberjer.com/touringholic/php/login_user.php"),
+        Uri.parse("https://slumberjer.com/touringholic/php/insert_gram.php"),
         body: {
           "email": widget.user.email,
-          "desc": desc,
+          "gram_desc": desc,
           "encoded_string": base64Image
         }).then((response) {
       print(response.body);
-      if (response.body == "Success") {
+      if (response.body == "success") {
         Fluttertoast.showToast(
             msg: "Success",
             toastLength: Toast.LENGTH_SHORT,
