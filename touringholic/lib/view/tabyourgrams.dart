@@ -47,7 +47,7 @@ class _TabYourGramsState extends State<TabYourGrams> {
                         //
                         children: List.generate(_userlistgrams.length, (index) {
                           return Padding(
-                            padding: EdgeInsets.all(5),
+                            padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
                             child: Card(
                               child: SingleChildScrollView(
                                 child: Column(
@@ -122,8 +122,8 @@ class _TabYourGramsState extends State<TabYourGrams> {
                                     ),
                                     SizedBox(height: 10),
                                     Container(
-                                      height: screenHeight / 2.8,
-                                      width: screenWidth,
+                                      height: screenWidth/1.8,
+                                      width: screenWidth/0.5,
                                       child: CachedNetworkImage(
                                         imageUrl:
                                             "https://slumberjer.com/touringholic/images/gram_pictures/${_userlistgrams[index]['gramid']}.png",
@@ -313,9 +313,9 @@ class _TabYourGramsState extends State<TabYourGrams> {
             color: Colors.black,
           ),
         ),
-        content: SingleChildScrollView(
-          child: Container(
-            height: screenHeight / 3,
+        content: Container(
+          height: screenHeight /3,
+          child: SingleChildScrollView(
             child: Column(
               children: [
                 TextFormField(
@@ -331,10 +331,12 @@ class _TabYourGramsState extends State<TabYourGrams> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
                 Container(
                   width: screenWidth,
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Theme.of(context).accentColor, // background
+                    ),
                     onPressed: () {
                       Navigator.pop(context);
                       String gramdesc = editdescCtrl.text.toString();
@@ -343,7 +345,6 @@ class _TabYourGramsState extends State<TabYourGrams> {
                     child: Text("Update"),
                   ),
                 ),
-                SizedBox(height: 10),
               ],
             ),
           ),
