@@ -2,7 +2,7 @@
 include_once("dbconnect.php");
 $user_email = $_POST['email'];
 
-$sqlloadgrams= "SELECT * FROM tbl_grams WHERE user_email = '$user_email'";
+$sqlloadgrams= "SELECT * FROM tbl_grams WHERE user_email = '$user_email' ORDER BY date_post DESC";
 $result = $conn->query($sqlloadgrams);
 
 if ($result->num_rows > 0){

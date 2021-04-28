@@ -9,22 +9,28 @@ import 'tablatestgrams.dart';
 
 class TouringGramScreen extends StatefulWidget {
   final User user;
-
-  const TouringGramScreen({Key key, this.user}) : super(key: key);
+  final int curtab;
+  const TouringGramScreen({Key key, this.user, this.curtab}) : super(key: key);
 
   @override
   _TouringGramScreenState createState() => _TouringGramScreenState();
 }
 
 class _TouringGramScreenState extends State<TouringGramScreen> {
-  int _currentIndex = 1;
+  int currentIndex ;
   List<Widget> tabchildren;
   String maintitle = "TouringGram";
+  TabController controller;
 
   @override
   void initState() {
     super.initState();
-    tabchildren = [TabLatestGrams(), TabNewGram(user: widget.user), TabYourGrams(user: widget.user)];
+    currentIndex = widget.curtab;
+    tabchildren = [
+      TabLatestGrams(),
+      TabNewGram(user: widget.user),
+      TabYourGrams(user: widget.user)
+    ];
   }
 
   @override
@@ -34,7 +40,7 @@ class _TouringGramScreenState extends State<TouringGramScreen> {
       child: Scaffold(
         bottomNavigationBar: ConvexAppBar(
             style: TabStyle.flip,
-            initialActiveIndex: _currentIndex, //
+            initialActiveIndex: currentIndex, //
             onTap: onTabTapped,
             backgroundColor: Theme.of(context).accentColor,
             items: [
@@ -46,21 +52,21 @@ class _TouringGramScreenState extends State<TouringGramScreen> {
           title: Text('Touring Gram'),
         ),
         drawer: MyDrawer(user: widget.user),
-        body: tabchildren[_currentIndex],
+        body: tabchildren[currentIndex],
       ),
     );
   }
 
   void onTabTapped(int index) {
     setState(() {
-      _currentIndex = index;
-      if (_currentIndex == 0) {
+      currentIndex = index;
+      if (currentIndex == 0) {
         maintitle = "TouringGram";
       }
-      if (_currentIndex == 1) {
+      if (currentIndex == 1) {
         maintitle = "New Gram";
       }
-      if (_currentIndex == 2) {
+      if (currentIndex == 2) {
         maintitle = "Your Grams";
       }
     });

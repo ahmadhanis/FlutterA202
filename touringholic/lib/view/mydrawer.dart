@@ -52,7 +52,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   context,
                   MaterialPageRoute(
                       builder: (content) => TouringGramScreen(
-                            user: widget.user,
+                            user: widget.user,curtab: 0,
                           )));
             }),
         ListTile(

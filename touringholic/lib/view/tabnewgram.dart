@@ -6,6 +6,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:touringholic/model/user.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:touringholic/view/touringgramscreen.dart';
 
 class TabNewGram extends StatefulWidget {
   final User user;
@@ -16,6 +18,7 @@ class TabNewGram extends StatefulWidget {
 }
 
 class _TabNewGramState extends State<TabNewGram> {
+  ProgressDialog pr;
   double screenHeight, screenWidth;
   String pathAsset = 'assets/images/camera.png';
   File _image;
@@ -255,7 +258,19 @@ class _TabNewGramState extends State<TabNewGram> {
         });
   }
 
-  void _postuserGram() {
+  Future<void> _postuserGram() async {
+    pr = ProgressDialog(context);
+    pr.style(
+      message: 'Posting...',
+      borderRadius: 5.0,
+      backgroundColor: Colors.white,
+      progressWidget: CircularProgressIndicator(),
+      elevation: 10.0,
+      insetAnimCurve: Curves.easeInOut,
+    );
+    pr = ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: true, showLogs: true);
+    await pr.show();
     String base64Image = base64Encode(_image.readAsBytesSync());
     String desc = _descCtrl.text.toString();
     print(desc);
@@ -266,6 +281,9 @@ class _TabNewGramState extends State<TabNewGram> {
           "gram_desc": desc,
           "encoded_string": base64Image
         }).then((response) {
+      pr.hide().then((isHidden) {
+        print(isHidden);
+      });
       print(response.body);
       if (response.body == "success") {
         Fluttertoast.showToast(
@@ -276,6 +294,18 @@ class _TabNewGramState extends State<TabNewGram> {
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
+
+        setState(() {
+          _image = null;
+          _descCtrl.text = "";
+        });
+         Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (content) => TouringGramScreen(
+                    user: widget.user,
+                    curtab: 2,
+                  )));
       } else {
         Fluttertoast.showToast(
             msg: "Failed",
@@ -286,6 +316,7 @@ class _TabNewGramState extends State<TabNewGram> {
             textColor: Colors.white,
             fontSize: 16.0);
       }
+     
     });
   }
 }
