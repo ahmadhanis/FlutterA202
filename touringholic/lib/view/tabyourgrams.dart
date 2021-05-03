@@ -22,7 +22,8 @@ class _TabYourGramsState extends State<TabYourGrams> {
   List _userlistgrams;
   String _titlecenter = "Loading...";
   final df = new DateFormat('dd-MM-yyyy hh:mm a');
-
+  int _pageno = 1;
+  int pagenum = 0;
   @override
   void initState() {
     super.initState();
@@ -40,158 +41,197 @@ class _TabYourGramsState extends State<TabYourGrams> {
             _userlistgrams == null
                 ? Flexible(child: Center(child: Text(_titlecenter)))
                 : Flexible(
-                    child: GridView.count(
-                        crossAxisCount: 1,
-                        // childAspectRatio:
-                        //     (screenWidth / screenHeight) / 0.6,
-                        //
-                        children: List.generate(_userlistgrams.length, (index) {
-                          return Padding(
-                            padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
-                            child: Card(
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    Container(
-                                        child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          flex: 2,
-                                          child: Container(
-                                              margin: EdgeInsets.all(5),
-                                              width: 50.0,
-                                              height: 50.0,
-                                              decoration: new BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  image: new DecorationImage(
-                                                      fit: BoxFit.cover,
-                                                      image: new NetworkImage(
-                                                          "https://slumberjer.com/touringholic/images/profileimages/default.png")))),
-                                        ),
-                                        Expanded(
-                                            flex: 6,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                    child: Container(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                            flex: 9,
+                            child: GridView.count(
+                                crossAxisCount: 1,
+                                // childAspectRatio:
+                                //     (screenWidth / screenHeight) / 0.6,
+                                //
+                                children: List.generate(_userlistgrams.length,
+                                    (index) {
+                                  return Padding(
+                                    padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
+                                    child: Card(
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                                child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
                                               children: [
-                                                Text(widget.user.name),
-                                                Text(df.format(DateTime.parse(
-                                                    _userlistgrams[index]
-                                                        ['date_post'])))
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Container(
+                                                      margin: EdgeInsets.all(5),
+                                                      width: 50.0,
+                                                      height: 50.0,
+                                                      decoration: new BoxDecoration(
+                                                          shape:
+                                                              BoxShape.circle,
+                                                          image: new DecorationImage(
+                                                              fit: BoxFit.cover,
+                                                              image: new NetworkImage(
+                                                                  "https://slumberjer.com/touringholic/images/profileimages/default.png")))),
+                                                ),
+                                                Expanded(
+                                                    flex: 6,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(widget.user.name),
+                                                        Text(df.format(DateTime
+                                                            .parse(_userlistgrams[
+                                                                    index]
+                                                                ['date_post'])))
+                                                      ],
+                                                    )),
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: Container(
+                                                      padding:
+                                                          EdgeInsets.fromLTRB(
+                                                              0, 0, 10, 0),
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      child: PopupMenuButton(
+                                                          onSelected:
+                                                              (newValue) {
+                                                            if (newValue == 1) {
+                                                              _deleteDialog(
+                                                                  index);
+                                                            }
+                                                            if (newValue == 0) {
+                                                              _editDialog(
+                                                                  index);
+                                                            }
+                                                          },
+                                                          child:
+                                                              Icon(Icons.menu),
+                                                          itemBuilder:
+                                                              (context) => [
+                                                                    PopupMenuItem(
+                                                                      child: Text(
+                                                                          "Edit"),
+                                                                      value: 0,
+                                                                    ),
+                                                                    PopupMenuItem(
+                                                                      child: Text(
+                                                                          "Delete"),
+                                                                      value: 1,
+                                                                    ),
+                                                                  ]),
+                                                    ))
                                               ],
                                             )),
-                                        Expanded(
-                                            flex: 2,
-                                            child: Container(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  0, 0, 10, 0),
-                                              alignment: Alignment.centerRight,
-                                              child: PopupMenuButton(
-                                                  onSelected: (newValue) {
-                                                    if (newValue == 1) {
-                                                      _deleteDialog(index);
-                                                    }
-                                                    if (newValue == 0) {
-                                                      _editDialog(index);
-                                                    }
-                                                  },
-                                                  child: Icon(Icons.menu),
-                                                  itemBuilder: (context) => [
-                                                        PopupMenuItem(
-                                                          child: Text("Edit"),
-                                                          value: 0,
-                                                        ),
-                                                        PopupMenuItem(
-                                                          child: Text("Delete"),
-                                                          value: 1,
-                                                        ),
-                                                      ]),
-                                            ))
-                                      ],
-                                    )),
-                                    GestureDetector(
-                                      onTap: () => _showGram(index),
-                                      child: Container(
-                                        padding: EdgeInsets.all(5),
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(checkGramLen(
-                                            _userlistgrams[index]['gramdesc'])),
-                                      ),
-                                    ),
-                                    SizedBox(height: 10),
-                                    Container(
-                                      height: screenWidth/1.8,
-                                      width: screenWidth/0.5,
-                                      child: CachedNetworkImage(
-                                        imageUrl:
-                                            "https://slumberjer.com/touringholic/images/gram_pictures/${_userlistgrams[index]['gramid']}.png",
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) =>
-                                            new Transform.scale(
-                                                scale: 0.5,
-                                                child:
-                                                    CircularProgressIndicator()),
-                                        errorWidget: (context, url, error) =>
-                                            new Icon(
-                                          Icons.broken_image,
-                                          size: screenWidth / 3,
+                                            GestureDetector(
+                                              onTap: () => _showGram(index),
+                                              child: Container(
+                                                padding: EdgeInsets.all(5),
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(checkGramLen(
+                                                    _userlistgrams[index]
+                                                        ['gramdesc'])),
+                                              ),
+                                            ),
+                                            SizedBox(height: 10),
+                                            Container(
+                                              height: screenWidth / 1.8,
+                                              width: screenWidth / 0.5,
+                                              child: CachedNetworkImage(
+                                                imageUrl:
+                                                    "https://slumberjer.com/touringholic/images/gram_pictures/${_userlistgrams[index]['gramid']}.png",
+                                                fit: BoxFit.cover,
+                                                placeholder: (context, url) =>
+                                                    new Transform.scale(
+                                                        scale: 0.5,
+                                                        child:
+                                                            CircularProgressIndicator()),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        new Icon(
+                                                  Icons.broken_image,
+                                                  size: screenWidth / 3,
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    TextButton(
+                                                      onPressed: () => {},
+                                                      child: Row(
+                                                        children: <Widget>[
+                                                          Text(
+                                                            '3',
+                                                            style: TextStyle(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .accentColor,
+                                                            ),
+                                                          ),
+                                                          Icon(
+                                                            Icons.comment,
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .accentColor,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () => {},
+                                                      child: Row(
+                                                        children: <Widget>[
+                                                          Text(
+                                                            '5',
+                                                            style: TextStyle(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .accentColor,
+                                                            ),
+                                                          ),
+                                                          Icon(
+                                                            Icons
+                                                                .favorite_border,
+                                                            color: Theme.of(
+                                                                    context)
+                                                                .accentColor,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ],
+                                                ))
+                                          ],
                                         ),
                                       ),
                                     ),
-                                    Container(
-                                        alignment: Alignment.centerRight,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            TextButton(
-                                              onPressed: () => {},
-                                              child: Row(
-                                                children: <Widget>[
-                                                  Text(
-                                                    '3',
-                                                    style: TextStyle(
-                                                      color: Theme.of(context)
-                                                          .accentColor,
-                                                    ),
-                                                  ),
-                                                  Icon(
-                                                    Icons.comment,
-                                                    color: Theme.of(context)
-                                                        .accentColor,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            TextButton(
-                                              onPressed: () => {},
-                                              child: Row(
-                                                children: <Widget>[
-                                                  Text(
-                                                    '5',
-                                                    style: TextStyle(
-                                                      color: Theme.of(context)
-                                                          .accentColor,
-                                                    ),
-                                                  ),
-                                                  Icon(
-                                                    Icons.favorite_border,
-                                                    color: Theme.of(context)
-                                                        .accentColor,
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ))
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        })))
+                                  );
+                                }))),
+                        Flexible(
+                            flex: 1,
+                            child: Container(
+                                alignment: Alignment.center,
+                                child: GestureDetector(
+                                    onTap: updatePage,
+                                    child: Text(
+                                        "Load More (current page $_pageno / $pagenum)"))))
+                      ],
+                    )),
+                  )
           ],
         ),
       ),
@@ -207,10 +247,12 @@ class _TabYourGramsState extends State<TabYourGrams> {
   }
 
   void _loadGrams() {
+    print(_pageno);
     http.post(
         Uri.parse("https://slumberjer.com/touringholic/php/load_usergrams.php"),
         body: {
           "email": widget.user.email,
+          "pageno": _pageno.toString(),
         }).then((response) {
       if (response.body == "nodata") {
         _titlecenter = "Sorry no gram available";
@@ -218,7 +260,7 @@ class _TabYourGramsState extends State<TabYourGrams> {
       } else {
         var jsondata = json.decode(response.body);
         _userlistgrams = jsondata["grams"];
-
+        pagenum = _userlistgrams[0]['numpage'];
         setState(() {});
         print(_userlistgrams);
       }
@@ -314,7 +356,7 @@ class _TabYourGramsState extends State<TabYourGrams> {
           ),
         ),
         content: Container(
-          height: screenHeight /3,
+          height: screenHeight / 3,
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -437,5 +479,17 @@ class _TabYourGramsState extends State<TabYourGrams> {
         ),
       ),
     );
+  }
+
+  updatePage() {
+    pagenum = _userlistgrams[0]['numpage'];
+    if (_pageno >= pagenum) {
+      _pageno = 1;
+      _loadGrams();
+      return;
+    } else {
+      _pageno++;
+      _loadGrams();
+    }
   }
 }

@@ -27,7 +27,7 @@ class _TouringGramScreenState extends State<TouringGramScreen> {
     super.initState();
     currentIndex = widget.curtab;
     tabchildren = [
-      TabLatestGrams(),
+      TabLatestGrams(user: widget.user),
       TabNewGram(user: widget.user),
       TabYourGrams(user: widget.user)
     ];

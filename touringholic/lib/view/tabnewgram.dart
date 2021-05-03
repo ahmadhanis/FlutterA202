@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:touringholic/model/user.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:touringholic/view/touringgramscreen.dart';
+import 'package:keyboard_visibility/keyboard_visibility.dart';
 
 class TabNewGram extends StatefulWidget {
   final User user;
@@ -22,20 +23,41 @@ class _TabNewGramState extends State<TabNewGram> {
   double screenHeight, screenWidth;
   String pathAsset = 'assets/images/camera.png';
   File _image;
+  final _focus = FocusNode();
+  bool _visible = true;
+
   TextEditingController _descCtrl = new TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    KeyboardVisibilityNotification().addNewListener(
+      onChange: (bool visible) {
+        print("KB" + visible.toString());
+        if (visible) {
+          _visible = false;
+        } else {
+          _visible = true;
+        }
+        setState(() {});
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        label: Text('Post'),
-        onPressed: () {
-          _postuserGramDialog();
-        },
-        icon: Icon(Icons.add),
-      ),
+      floatingActionButton: Visibility(
+          visible: _visible,
+          child: FloatingActionButton.extended(
+            label: Text('Post'),
+            onPressed: () {
+              _postuserGramDialog();
+            },
+            icon: Icon(Icons.add),
+          )),
       body: Center(
         child: Container(
           child: Padding(
@@ -73,6 +95,7 @@ class _TabNewGramState extends State<TabNewGram> {
                       style: TextStyle(fontSize: 10.0, color: Colors.black)),
                   SizedBox(height: 5),
                   TextFormField(
+                    focusNode: _focus,
                     controller: _descCtrl,
                     minLines: 7,
                     maxLines: 7,
@@ -294,18 +317,17 @@ class _TabNewGramState extends State<TabNewGram> {
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
-
         setState(() {
           _image = null;
           _descCtrl.text = "";
         });
-         Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (content) => TouringGramScreen(
-                    user: widget.user,
-                    curtab: 2,
-                  )));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (content) => TouringGramScreen(
+                      user: widget.user,
+                      curtab: 2,
+                    )));
       } else {
         Fluttertoast.showToast(
             msg: "Failed",
@@ -316,7 +338,6 @@ class _TabNewGramState extends State<TabNewGram> {
             textColor: Colors.white,
             fontSize: 16.0);
       }
-     
     });
   }
 }
