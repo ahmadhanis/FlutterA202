@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:touringholic/model/user.dart';
 import 'package:touringholic/view/mydrawer.dart';
-import 'package:touringholic/view/tabnewgram.dart';
-import 'package:touringholic/view/tabyourgrams.dart';
+import 'package:touringholic/view/tabgrams/tablatestgrams.dart';
+import 'package:touringholic/view/tabgrams/tabnewgram.dart';
+import 'package:touringholic/view/tabgrams/tabyourgrams.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'mainscreen.dart';
-import 'tablatestgrams.dart';
 
 class TouringGramScreen extends StatefulWidget {
   final User user;

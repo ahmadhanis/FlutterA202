@@ -30,8 +30,8 @@ class CustomTheme {
             selectionHandleColor: Colors.red, cursorColor: Colors.red),
         fontFamily: 'Georgia',
         textTheme: TextTheme(
-          headline1: TextStyle(fontSize: 42.0, fontWeight: FontWeight.bold),
-          headline6: TextStyle(fontSize: 24.0, fontStyle: FontStyle.italic),
+          headline1: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold),
+          headline6: TextStyle(fontSize: 18.0, fontStyle: FontStyle.italic),
           bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
         ),
         buttonTheme: ButtonThemeData(

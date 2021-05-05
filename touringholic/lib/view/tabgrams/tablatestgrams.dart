@@ -94,7 +94,9 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: [
-                                                        Text(widget.user.name),
+                                                        Text(_userlistgrams[
+                                                                index]
+                                                            ['user_name']),
                                                         Text(df.format(DateTime
                                                             .parse(_userlistgrams[
                                                                     index]
@@ -125,11 +127,6 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
                                                                       child: Text(
                                                                           "Report"),
                                                                       value: 0,
-                                                                    ),
-                                                                    PopupMenuItem(
-                                                                      child: Text(
-                                                                          "Delete"),
-                                                                      value: 1,
                                                                     ),
                                                                   ]),
                                                     ))
@@ -185,11 +182,17 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
                                                                   .accentColor,
                                                             ),
                                                           ),
-                                                          Icon(
-                                                            Icons.comment,
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .accentColor,
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              loadCommentDialog(
+                                                                  index);
+                                                            },
+                                                            child: Icon(
+                                                              Icons.comment,
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .accentColor,
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
@@ -317,6 +320,135 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
         pagenum = _userlistgrams[0]['numpage'];
         setState(() {});
         print(_userlistgrams);
+      }
+    });
+  }
+
+  Future<void> loadCommentDialog(int index) async {
+    List listComments;
+
+    await loadComment(index, listComments);
+
+    TextEditingController txtCommentCtrl = new TextEditingController();
+    print(index);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          title: new Text("Users Comment"),
+          content: SingleChildScrollView(
+            child: new Container(
+              height: screenHeight / 3,
+              width: screenWidth,
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                      flex: 7,
+                      child: Container(
+                          child: ListView(
+                        children: [
+                          ListTile(
+                            title: Text('Hello sir'),
+                          ),
+                          ListTile(
+                            title: Text('Hello Again...', style: TextStyle()),
+                          ),
+                        ],
+                      ))),
+                  Expanded(
+                      flex: 3,
+                      child: Container(
+                          child: Row(
+                        children: [
+                          Flexible(
+                              flex: 9,
+                              child: TextField(
+                                controller: txtCommentCtrl,
+                                decoration: InputDecoration(
+                                  border: new OutlineInputBorder(
+                                    borderRadius: const BorderRadius.all(
+                                      const Radius.circular(10.0),
+                                    ),
+                                  ),
+                                  labelText: 'Your Comment',
+                                ),
+                                keyboardType: TextInputType.multiline,
+                                minLines:
+                                    3, //Normal textInputField will be displayed
+                                maxLines:
+                                    3, // when user presses enter it will adapt to it
+                              )),
+                          Flexible(
+                            flex: 1,
+                            child: IconButton(
+                                onPressed: () {
+                                  sendComment(txtCommentCtrl.text, index);
+                                },
+                                icon: Icon(Icons.send)),
+                          )
+                        ],
+                      )))
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void sendComment(String comment, int index) {
+    print(comment);
+    print(_userlistgrams[index]['user_email']);
+    print(widget.user.email);
+    print(_userlistgrams[index]['gramid']);
+
+    http.post(
+        Uri.parse("https://slumberjer.com/touringholic/php/insert_comment.php"),
+        body: {
+          "gram_id": _userlistgrams[index]['gramid'],
+          "gram_owner": _userlistgrams[index]['user_email'],
+          "gram_reply": widget.user.email,
+          "gram_comment": comment,
+        }).then((response) {
+      if (response.body == "success") {
+        Fluttertoast.showToast(
+            msg: "Success",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
+  }
+
+  Future loadComment(int index, List listComments) async {
+    http.post(
+        Uri.parse("https://slumberjer.com/touringholic/php/load_comments.php"),
+        body: {
+          "gramid": _userlistgrams[index]['gramid'],
+        }).then((response) {
+      if (response.body == "nodata") {
+        print("no data");
+        return;
+      } else {
+        var jsondata = json.decode(response.body);
+        listComments = jsondata["comments"];
+        print(listComments);
       }
     });
   }
