@@ -327,7 +327,7 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
   Future<void> loadCommentDialog(int index) async {
     List listComments;
 
-    await loadComment(index, listComments);
+    listComments = await loadComment(index);
 
     TextEditingController txtCommentCtrl = new TextEditingController();
     print(index);
@@ -335,72 +335,89 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
       context: context,
       builder: (BuildContext context) {
         // return object of type Dialog
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          title: new Text("Users Comment"),
-          content: SingleChildScrollView(
-            child: new Container(
-              height: screenHeight / 3,
-              width: screenWidth,
-              child: Column(
-                children: <Widget>[
-                  Expanded(
-                      flex: 7,
-                      child: Container(
-                          child: ListView(
-                        children: [
-                          ListTile(
-                            title: Text('Hello sir'),
-                          ),
-                          ListTile(
-                            title: Text('Hello Again...', style: TextStyle()),
-                          ),
-                        ],
-                      ))),
-                  Expanded(
-                      flex: 3,
-                      child: Container(
-                          child: Row(
-                        children: [
-                          Flexible(
-                              flex: 9,
-                              child: TextField(
-                                controller: txtCommentCtrl,
-                                decoration: InputDecoration(
-                                  border: new OutlineInputBorder(
-                                    borderRadius: const BorderRadius.all(
-                                      const Radius.circular(10.0),
+        return StatefulBuilder(builder: (context, newSetState) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+            title: new Text("Comment"),
+            content: SingleChildScrollView(
+              child: new Container(
+                height: screenHeight / 2,
+                width: screenWidth,
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                        flex: 7,
+                        child: Container(
+                            child: Column(
+                          children: [
+                            listComments == null
+                                ? Flexible(
+                                    child: Center(child: Text("Loading")))
+                                : Flexible(
+                                    child: GridView.count(
+                                        crossAxisCount: 1,
+                                        children: List.generate(
+                                            listComments.length, (index) {
+                                          return Column(
+                                            children: [
+                                              Text(listComments[index]
+                                                  ['user_name']),
+                                              Text(listComments[index]
+                                                  ['gram_comment']),
+                                              Text(df.format(DateTime.parse(
+                                                  listComments[index]
+                                                      ['gram_datepost'])))
+                                            ],
+                                          );
+                                        })))
+                          ],
+                        ))),
+                    Expanded(
+                        flex: 2,
+                        child: Container(
+                            child: Row(
+                          children: [
+                            Flexible(
+                                flex: 9,
+                                child: TextField(
+                                  controller: txtCommentCtrl,
+                                  decoration: InputDecoration(
+                                    border: new OutlineInputBorder(
+                                      borderRadius: const BorderRadius.all(
+                                        const Radius.circular(10.0),
+                                      ),
                                     ),
+                                    labelText: 'Comments',
                                   ),
-                                  labelText: 'Your Comment',
-                                ),
-                                keyboardType: TextInputType.multiline,
-                                minLines:
-                                    3, //Normal textInputField will be displayed
-                                maxLines:
-                                    3, // when user presses enter it will adapt to it
-                              )),
-                          Flexible(
-                            flex: 1,
-                            child: IconButton(
-                                onPressed: () {
-                                  sendComment(txtCommentCtrl.text, index);
-                                },
-                                icon: Icon(Icons.send)),
-                          )
-                        ],
-                      )))
-                ],
+                                  keyboardType: TextInputType.multiline,
+                                  minLines:
+                                      3, //Normal textInputField will be displayed
+                                  maxLines:
+                                      3, // when user presses enter it will adapt to it
+                                )),
+                            Flexible(
+                              flex: 1,
+                              child: IconButton(
+                                  onPressed: () {
+                                    sendComment(txtCommentCtrl.text, index,
+                                        newSetState);
+                                  },
+                                  icon: Icon(Icons.send)),
+                            )
+                          ],
+                        )))
+                  ],
+                ),
               ),
             ),
-          ),
-        );
+          );
+        });
       },
     );
   }
 
-  void sendComment(String comment, int index) {
+  void sendComment(String comment, int index, newSetState) {
     print(comment);
     print(_userlistgrams[index]['user_email']);
     print(widget.user.email);
@@ -423,6 +440,7 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
+        loadComment(index);
       } else {
         Fluttertoast.showToast(
             msg: "Failed",
@@ -436,20 +454,20 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
     });
   }
 
-  Future loadComment(int index, List listComments) async {
-    http.post(
-        Uri.parse("https://slumberjer.com/touringholic/php/load_comments.php"),
-        body: {
-          "gramid": _userlistgrams[index]['gramid'],
-        }).then((response) {
-      if (response.body == "nodata") {
-        print("no data");
-        return;
-      } else {
-        var jsondata = json.decode(response.body);
-        listComments = jsondata["comments"];
-        print(listComments);
-      }
-    });
-  }
+  Future<List> loadComment(int index) async => http.post(
+          Uri.parse(
+              "https://slumberjer.com/touringholic/php/load_comments.php"),
+          body: {
+            "gramid": _userlistgrams[index]['gramid'],
+          }).then((response) {
+        List listComments;
+        if (response.body == "nodata") {
+          print("no data");
+          return null;
+        } else {
+          var jsondata = json.decode(response.body);
+          print(jsondata);
+          return listComments = jsondata["comments"];
+        }
+      });
 }
