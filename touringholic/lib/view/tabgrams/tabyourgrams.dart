@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:touringholic/config.dart';
 import 'package:touringholic/model/user.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -24,6 +25,9 @@ class _TabYourGramsState extends State<TabYourGrams> {
   final df = new DateFormat('dd-MM-yyyy hh:mm a');
   int _pageno = 1;
   int pagenum = 0;
+  String commenttxt = "Loading...";
+  List listComments;
+
   @override
   void initState() {
     super.initState();
@@ -48,13 +52,9 @@ class _TabYourGramsState extends State<TabYourGrams> {
                       children: [
                         Flexible(
                             flex: 9,
-                            child: GridView.count(
-                                crossAxisCount: 1,
-                                // childAspectRatio:
-                                //     (screenWidth / screenHeight) / 0.6,
-                                //
-                                children: List.generate(_userlistgrams.length,
-                                    (index) {
+                             child: ListView.builder(
+                                itemCount: _userlistgrams.length,
+                                itemBuilder: (BuildContext ctxt, int index) {
                                   return Padding(
                                     padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
                                     child: Card(
@@ -78,7 +78,7 @@ class _TabYourGramsState extends State<TabYourGrams> {
                                                           image: new DecorationImage(
                                                               fit: BoxFit.cover,
                                                               image: new NetworkImage(
-                                                                  "https://slumberjer.com/touringholic/images/profileimages/default.png")))),
+                                                                  CONFIG.SERVER +"/touringholic/images/profileimages/default.png")))),
                                                 ),
                                                 Expanded(
                                                     flex: 6,
@@ -148,7 +148,7 @@ class _TabYourGramsState extends State<TabYourGrams> {
                                               width: screenWidth / 0.5,
                                               child: CachedNetworkImage(
                                                 imageUrl:
-                                                    "https://slumberjer.com/touringholic/images/gram_pictures/${_userlistgrams[index]['gramid']}.png",
+                                                    CONFIG.SERVER +"/touringholic/images/gram_pictures/${_userlistgrams[index]['gramid']}.png",
                                                 fit: BoxFit.cover,
                                                 placeholder: (context, url) =>
                                                     new Transform.scale(
@@ -175,18 +175,24 @@ class _TabYourGramsState extends State<TabYourGrams> {
                                                       child: Row(
                                                         children: <Widget>[
                                                           Text(
-                                                            '3',
+                                                            '',
                                                             style: TextStyle(
                                                               color: Theme.of(
                                                                       context)
                                                                   .accentColor,
                                                             ),
                                                           ),
-                                                          Icon(
-                                                            Icons.comment,
-                                                            color: Theme.of(
-                                                                    context)
-                                                                .accentColor,
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              loadCommentDialog(
+                                                                  index);
+                                                            },
+                                                            child: Icon(
+                                                              Icons.comment,
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .accentColor,
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
@@ -196,7 +202,7 @@ class _TabYourGramsState extends State<TabYourGrams> {
                                                       child: Row(
                                                         children: <Widget>[
                                                           Text(
-                                                            '5',
+                                                            '',
                                                             style: TextStyle(
                                                               color: Theme.of(
                                                                       context)
@@ -220,7 +226,7 @@ class _TabYourGramsState extends State<TabYourGrams> {
                                       ),
                                     ),
                                   );
-                                }))),
+                                })),
                         Flexible(
                             flex: 1,
                             child: Container(
@@ -249,7 +255,7 @@ class _TabYourGramsState extends State<TabYourGrams> {
   void _loadGrams() {
     print(_pageno);
     http.post(
-        Uri.parse("https://slumberjer.com/touringholic/php/load_usergrams.php"),
+        Uri.parse(CONFIG.SERVER +"/touringholic/php/load_usergrams.php"),
         body: {
           "email": widget.user.email,
           "pageno": _pageno.toString(),
@@ -311,7 +317,7 @@ class _TabYourGramsState extends State<TabYourGrams> {
 
     http.post(
         Uri.parse(
-            "https://slumberjer.com/touringholic/php/delete_usergram.php"),
+            CONFIG.SERVER +"/touringholic/php/delete_usergram.php"),
         body: {
           "gramid": _userlistgrams[index]['gramid'],
         }).then((response) {
@@ -410,7 +416,7 @@ class _TabYourGramsState extends State<TabYourGrams> {
     await pr.show();
     http.post(
         Uri.parse(
-            "https://slumberjer.com/touringholic/php/update_usergram.php"),
+            CONFIG.SERVER +"/touringholic/php/update_usergram.php"),
         body: {
           "gramid": _userlistgrams[index]['gramid'],
           "newgram": newgram
@@ -492,4 +498,181 @@ class _TabYourGramsState extends State<TabYourGrams> {
       _loadGrams();
     }
   }
+
+  Future<void> loadCommentDialog(int index) async {
+    listComments = await loadComment(index);
+
+    TextEditingController txtCommentCtrl = new TextEditingController();
+    print(index);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return StatefulBuilder(builder: (context, newSetState) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+            title: new Text("Comments"),
+            content: SingleChildScrollView(
+              child: new Container(
+                height: screenHeight / 2,
+                width: screenWidth,
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                        flex: 7,
+                        child: Container(
+                            child: Column(
+                          children: [
+                            listComments == null
+                                ? Flexible(
+                                    child: Center(child: Text(commenttxt)))
+                                : Flexible(
+                                    child: ListView.builder(
+                                        itemCount: listComments.length,
+                                        itemBuilder:
+                                            (BuildContext ctxt, int index) {
+                                          return Card(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(4.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text("by " +
+                                                      listComments[index]
+                                                          ['user_name']),
+                                                  Text(listComments[index]
+                                                      ['gram_comment']),
+                                                  Text("at " +
+                                                      df.format(DateTime.parse(
+                                                          listComments[index][
+                                                              'gram_datepost'])))
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        }))
+                          ],
+                        ))),
+                    Expanded(
+                        flex: 2,
+                        child: Container(
+                            child: Row(
+                          children: [
+                            Flexible(
+                                flex: 9,
+                                child: TextField(
+                                  controller: txtCommentCtrl,
+                                  decoration: InputDecoration(
+                                    border: new OutlineInputBorder(
+                                      borderRadius: const BorderRadius.all(
+                                        const Radius.circular(10.0),
+                                      ),
+                                    ),
+                                    labelText: 'Comments',
+                                  ),
+                                  keyboardType: TextInputType.multiline,
+                                  minLines:
+                                      3, //Normal textInputField will be displayed
+                                  maxLines:
+                                      3, // when user presses enter it will adapt to it
+                                )),
+                            Flexible(
+                              flex: 1,
+                              child: IconButton(
+                                  onPressed: () async {
+                                    sendComment(txtCommentCtrl.text, index,
+                                        newSetState);
+                                  },
+                                  icon: Icon(Icons.send)),
+                            )
+                          ],
+                        )))
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+      },
+    );
+  }
+
+  void sendComment(String comment, int index, newSetState) {
+    print(comment);
+    print(_userlistgrams[index]['user_email']);
+    print(widget.user.email);
+    print(_userlistgrams[index]['gramid']);
+
+    http.post(
+        Uri.parse(CONFIG.SERVER +"/touringholic/php/insert_comment.php"),
+        body: {
+          "gram_id": _userlistgrams[index]['gramid'],
+          "gram_owner": _userlistgrams[index]['user_email'],
+          "gram_reply": widget.user.email,
+          "gram_comment": comment,
+        }).then((response) async {
+      if (response.body == "success") {
+        Fluttertoast.showToast(
+            msg: "Success",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+
+        listComments = await loadCommentInner(index, newSetState);
+      } else {
+        Fluttertoast.showToast(
+            msg: "Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
+  }
+
+  Future<List> loadComment(int index) async => http.post(
+          Uri.parse(
+              CONFIG.SERVER +"/touringholic/php/load_comments.php"),
+          body: {
+            "gramid": _userlistgrams[index]['gramid'],
+          }).then((response) {
+        List listComments;
+        if (response.body == "nodata") {
+          commenttxt = "No Comment";
+          print("no data");
+          return null;
+        } else {
+          var jsondata = json.decode(response.body);
+          print(jsondata);
+          return listComments = jsondata["comments"];
+        }
+      });
+
+  Future<List> loadCommentInner(int index, newSetState) async => http.post(
+          Uri.parse(
+              CONFIG.SERVER +"/touringholic/php/load_comments.php"),
+          body: {
+            "gramid": _userlistgrams[index]['gramid'],
+          }).then((response) {
+        List listComments;
+        if (response.body == "nodata") {
+          commenttxt = "No Comment";
+          print("no data");
+          return null;
+        } else {
+          var jsondata = json.decode(response.body);
+          print(jsondata);
+          listComments = jsondata["comments"];
+          newSetState(() {});
+          return listComments;
+        }
+      });
 }

@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:touringholic/config.dart';
 import 'package:touringholic/model/user.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:touringholic/view/touringgramscreen.dart';
@@ -298,7 +299,7 @@ class _TabNewGramState extends State<TabNewGram> {
     String desc = _descCtrl.text.toString();
     print(desc);
     http.post(
-        Uri.parse("https://slumberjer.com/touringholic/php/insert_gram.php"),
+        Uri.parse(CONFIG.SERVER +"/touringholic/php/insert_gram.php"),
         body: {
           "email": widget.user.email,
           "gram_desc": desc,

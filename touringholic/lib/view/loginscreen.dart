@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:touringholic/config.dart';
 import 'package:touringholic/model/user.dart';
 import 'mainscreen.dart';
 import 'registrationscreen.dart';
@@ -132,8 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     String _email = _emailController.text.toString();
     String _password = _passwordController.text.toString();
-    http.post(
-        Uri.parse("https://slumberjer.com/touringholic/php/login_user.php"),
+    http.post(Uri.parse(CONFIG.SERVER + "/touringholic/php/login_user.php"),
         body: {"email": _email, "password": _password}).then((response) {
       print(response.body);
       if (response.body == "failed") {
@@ -331,8 +331,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _resetPassword(String emailreset) {
     http.post(
-        Uri.parse(
-            "https://slumberjer.com/touringholic/php/insert_gram.php"),
+        Uri.parse(CONFIG.SERVER +"/touringholic/php/insert_gram.php"),
         body: {"email": emailreset}).then((response) {
       print(response.body);
       if (response.body == "success") {

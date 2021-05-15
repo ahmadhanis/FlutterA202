@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:touringholic/config.dart';
 import 'loginscreen.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
@@ -264,7 +265,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         type: ProgressDialogType.Normal, isDismissible: true, showLogs: true);
     await pr.show();
     http.post(
-        Uri.parse("https://slumberjer.com/touringholic/php/register_user.php"),
+        Uri.parse(CONFIG.SERVER +"/touringholic/php/register_user.php"),
         body: {
           "name": name,
           "email": email,

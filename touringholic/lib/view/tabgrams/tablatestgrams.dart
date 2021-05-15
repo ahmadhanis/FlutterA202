@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:touringholic/config.dart';
 import 'package:touringholic/model/user.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -24,6 +25,8 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
   final df = new DateFormat('dd-MM-yyyy hh:mm a');
   int _pageno = 1;
   int pagenum = 0;
+  String commenttxt = "Loading...";
+  List listComments;
 
   @override
   void initState() {
@@ -55,13 +58,9 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
                       children: [
                         Flexible(
                             flex: 9,
-                            child: GridView.count(
-                                crossAxisCount: 1,
-                                // childAspectRatio:
-                                //     (screenWidth / screenHeight) / 0.6,
-                                //
-                                children: List.generate(_userlistgrams.length,
-                                    (index) {
+                            child: ListView.builder(
+                                itemCount: _userlistgrams.length,
+                                itemBuilder: (BuildContext ctxt, int index) {
                                   return Padding(
                                     padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
                                     child: Card(
@@ -85,7 +84,7 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
                                                           image: new DecorationImage(
                                                               fit: BoxFit.cover,
                                                               image: new NetworkImage(
-                                                                  "https://slumberjer.com/touringholic/images/profileimages/default.png")))),
+                                                                  CONFIG.SERVER +"/touringholic/images/profileimages/default.png")))),
                                                 ),
                                                 Expanded(
                                                     flex: 6,
@@ -148,7 +147,7 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
                                               width: screenWidth / 0.5,
                                               child: CachedNetworkImage(
                                                 imageUrl:
-                                                    "https://slumberjer.com/touringholic/images/gram_pictures/${_userlistgrams[index]['gramid']}.png",
+                                                    CONFIG.SERVER +"/touringholic/images/gram_pictures/${_userlistgrams[index]['gramid']}.png",
                                                 fit: BoxFit.cover,
                                                 placeholder: (context, url) =>
                                                     new Transform.scale(
@@ -175,7 +174,7 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
                                                       child: Row(
                                                         children: <Widget>[
                                                           Text(
-                                                            '3',
+                                                            '',
                                                             style: TextStyle(
                                                               color: Theme.of(
                                                                       context)
@@ -202,7 +201,7 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
                                                       child: Row(
                                                         children: <Widget>[
                                                           Text(
-                                                            '5',
+                                                            '',
                                                             style: TextStyle(
                                                               color: Theme.of(
                                                                       context)
@@ -226,7 +225,7 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
                                       ),
                                     ),
                                   );
-                                }))),
+                                })),
                         Flexible(
                             flex: 1,
                             child: Container(
@@ -307,7 +306,7 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
   void _loadGrams() {
     print(_pageno);
     http.post(
-        Uri.parse("https://slumberjer.com/touringholic/php/load_usergrams.php"),
+        Uri.parse(CONFIG.SERVER +"/touringholic/php/load_usergrams.php"),
         body: {
           "pageno": _pageno.toString(),
         }).then((response) {
@@ -325,7 +324,6 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
   }
 
   Future<void> loadCommentDialog(int index) async {
-    List listComments;
 
     listComments = await loadComment(index);
 
@@ -339,7 +337,7 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
           return AlertDialog(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10.0))),
-            title: new Text("Comment"),
+            title: new Text("Comments"),
             content: SingleChildScrollView(
               child: new Container(
                 height: screenHeight / 2,
@@ -353,24 +351,34 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
                           children: [
                             listComments == null
                                 ? Flexible(
-                                    child: Center(child: Text("Loading")))
+                                    child: Center(child: Text(commenttxt)))
                                 : Flexible(
-                                    child: GridView.count(
-                                        crossAxisCount: 1,
-                                        children: List.generate(
-                                            listComments.length, (index) {
-                                          return Column(
-                                            children: [
-                                              Text(listComments[index]
-                                                  ['user_name']),
-                                              Text(listComments[index]
-                                                  ['gram_comment']),
-                                              Text(df.format(DateTime.parse(
-                                                  listComments[index]
-                                                      ['gram_datepost'])))
-                                            ],
+                                    child: ListView.builder(
+                                        itemCount: listComments.length,
+                                        itemBuilder:
+                                            (BuildContext ctxt, int index) {
+                                          return Card(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(4.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text("by " +
+                                                      listComments[index]
+                                                          ['user_name']),
+                                                  Text(listComments[index]
+                                                      ['gram_comment']),
+                                                  Text("at " +
+                                                      df.format(DateTime.parse(
+                                                          listComments[index][
+                                                              'gram_datepost'])))
+                                                ],
+                                              ),
+                                            ),
                                           );
-                                        })))
+                                        }))
                           ],
                         ))),
                     Expanded(
@@ -388,7 +396,7 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
                                         const Radius.circular(10.0),
                                       ),
                                     ),
-                                    labelText: 'Comments',
+                                    labelText: 'Your Comment',
                                   ),
                                   keyboardType: TextInputType.multiline,
                                   minLines:
@@ -399,7 +407,7 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
                             Flexible(
                               flex: 1,
                               child: IconButton(
-                                  onPressed: () {
+                                  onPressed: () async {
                                     sendComment(txtCommentCtrl.text, index,
                                         newSetState);
                                   },
@@ -424,13 +432,13 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
     print(_userlistgrams[index]['gramid']);
 
     http.post(
-        Uri.parse("https://slumberjer.com/touringholic/php/insert_comment.php"),
+        Uri.parse(CONFIG.SERVER +"/touringholic/php/insert_comment.php"),
         body: {
           "gram_id": _userlistgrams[index]['gramid'],
           "gram_owner": _userlistgrams[index]['user_email'],
           "gram_reply": widget.user.email,
           "gram_comment": comment,
-        }).then((response) {
+        }).then((response) async {
       if (response.body == "success") {
         Fluttertoast.showToast(
             msg: "Success",
@@ -440,7 +448,8 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
-        loadComment(index);
+
+        listComments = await loadCommentInner(index, newSetState);
       } else {
         Fluttertoast.showToast(
             msg: "Failed",
@@ -456,18 +465,39 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
 
   Future<List> loadComment(int index) async => http.post(
           Uri.parse(
-              "https://slumberjer.com/touringholic/php/load_comments.php"),
+              CONFIG.SERVER +"/touringholic/php/load_comments.php"),
           body: {
             "gramid": _userlistgrams[index]['gramid'],
           }).then((response) {
         List listComments;
         if (response.body == "nodata") {
+          commenttxt = "No Comment";
           print("no data");
           return null;
         } else {
           var jsondata = json.decode(response.body);
           print(jsondata);
           return listComments = jsondata["comments"];
+        }
+      });
+
+  Future<List> loadCommentInner(int index, newSetState) async => http.post(
+          Uri.parse(
+              CONFIG.SERVER +"/touringholic/php/load_comments.php"),
+          body: {
+            "gramid": _userlistgrams[index]['gramid'],
+          }).then((response) {
+        List listComments;
+        if (response.body == "nodata") {
+          commenttxt = "No Comment";
+          print("no data");
+          return null;
+        } else {
+          var jsondata = json.decode(response.body);
+          print(jsondata);
+          listComments = jsondata["comments"];
+          newSetState(() {});
+          return listComments;
         }
       });
 }
