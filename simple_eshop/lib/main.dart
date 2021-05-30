@@ -6,7 +6,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cartpage.dart';
 import 'config.dart';
-import 'package:nanoid/nanoid.dart';
 
 void main() => runApp(MyApp());
 
@@ -38,19 +37,20 @@ class _MyHomePageState extends State<MyHomePage> {
   late double screenHeight, screenWidth;
   late SharedPreferences prefs;
   String email = "";
+  int cartitem = 0;
 
   @override
   void initState() {
     super.initState();
-    _loadPref();
-    _loadProduct();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _testasync();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Simple ESHOP'),
@@ -59,11 +59,11 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () => {_goToCart()},
               icon: Icon(
                 Icons.shopping_cart,
-                color: Colors.red,
+                color: Colors.white,
               ),
               label: Text(
-                "5",
-                style: TextStyle(color: Colors.red),
+                cartitem.toString(),
+                style: TextStyle(color: Colors.white),
               )),
         ],
       ),
@@ -185,7 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
     print(email);
     if (email == '') {
       _loademaildialog();
-    }
+    } else {}
   }
 
   _loadProduct() {
@@ -206,7 +206,35 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _addtocart(int index) {
-    _loademaildialog();
+    if (email == '') {
+      _loademaildialog();
+    } else {
+      String prid = _productList[index]['productId'];
+      http.post(Uri.parse(CONFIG.SERVER + "/myshopweb/mobile/insertcart.php"),
+          body: {"email": email, "prid": prid}).then((response) {
+        if (response.body == "failed") {
+          Fluttertoast.showToast(
+              msg: "Failed",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        } else {
+          Fluttertoast.showToast(
+              msg: "Success",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+              _loadCart();
+        }
+      });
+    }
+
     // int qty = int.parse(_productList[index]['quantity']);
     // if (qty == 0) {
     //   Fluttertoast.showToast(
@@ -238,6 +266,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _loademaildialog() {
+    TextEditingController _emailController = new TextEditingController();
     showDialog(
         builder: (context) => new AlertDialog(
                 shape: RoundedRectangleBorder(
@@ -250,28 +279,64 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 actions: <Widget>[
                   SingleChildScrollView(
-                    child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: [
                           TextFormField(
+                              controller: _emailController,
                               decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.email,
-                              color: Colors.black,
-                            ),
-                            border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.white24)
+                                prefixIcon: Icon(
+                                  Icons.email,
+                                  color: Colors.black,
                                 ),
-                          )),
+                                border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10.0)),
+                                    borderSide:
+                                        BorderSide(color: Colors.white24)),
+                              )),
                           ElevatedButton(
-                              onPressed: () {}, child: Text("Proceed"))
+                              onPressed: () async {
+                                String _email =
+                                    _emailController.text.toString();
+                                prefs = await SharedPreferences.getInstance();
+                                await prefs.setString("email", _email);
+                                email = _email;
+                                Fluttertoast.showToast(
+                                    msg: "Email stored",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.TOP,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor:
+                                        Color.fromRGBO(191, 30, 46, 50),
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("Proceed"))
                         ],
                       ),
                     ),
-                  )
+                  ),
                 ]),
         context: context);
+  }
+
+  void _loadCart() {
+    print(email);
+    http.post(Uri.parse(CONFIG.SERVER + "/myshopweb/mobile/loadcartitem.php"),
+        body: {"email": email}).then((response) {
+      setState(() {
+        cartitem = int.parse(response.body);
+        print(cartitem);
+      });
+    });
+  }
+
+  Future<void> _testasync() async {
+    await _loadPref();
+    _loadProduct();
+    _loadCart();
   }
 }
