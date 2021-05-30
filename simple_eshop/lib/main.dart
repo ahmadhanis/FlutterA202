@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
@@ -94,74 +94,65 @@ class _MyHomePageState extends State<MyHomePage> {
             else
               Flexible(
                   child: OrientationBuilder(builder: (context, orientation) {
-                return GridView.builder(
-                    padding: EdgeInsets.all(20),
+                return StaggeredGridView.countBuilder(
+                    padding: EdgeInsets.all(10),
+                    crossAxisCount: orientation == Orientation.portrait ? 2 : 4,
                     itemCount: _productList.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        childAspectRatio: orientation == Orientation.portrait
-                            ? screenWidth / screenHeight * 1.2
-                            : screenHeight / screenWidth * 1.1,
-                        crossAxisCount:
-                            orientation == Orientation.portrait ? 2 : 3,
-                        crossAxisSpacing: 1.0,
-                        mainAxisSpacing: 1.0),
+                    staggeredTileBuilder: (int index) =>
+                        new StaggeredTile.fit(1),
+                    mainAxisSpacing: 4.0,
+                    crossAxisSpacing: 4.0,
                     itemBuilder: (BuildContext ctxt, int index) {
-                      return InkWell(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Container(
-                                child: Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          height: orientation ==
-                                                  Orientation.portrait
+                      return Column(
+                        children: [
+                          Container(
+                            //color: Colors.red,
+                            child: Card(
+                              elevation: 10,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      height:
+                                          orientation == Orientation.portrait
                                               ? 100
                                               : 150,
-                                          width: orientation ==
-                                                  Orientation.portrait
-                                              ? 100
-                                              : 150,
-                                          child: Image.network(CONFIG.SERVER +
-                                              _productList[index]['picture']),
-                                        ),
-                                        Text(
-                                          titleSub(_productList[index]
-                                              ['productName']),
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                            _productList[index]['productType']),
-                                        Text("Qty:" +
-                                            _productList[index]['quantity']),
-                                        Text("RM " +
-                                            double.parse(_productList[index]
-                                                    ['price'])
-                                                .toStringAsFixed(2)),
-                                        Container(
-                                          child: ElevatedButton(
-                                            onPressed: () =>
-                                                {_addtocart(index)},
-                                            child: Text("Add to Cart"),
-                                          ),
-                                        ),
-                                      ],
+                                      width: orientation == Orientation.portrait
+                                          ? 100
+                                          : 150,
+                                      child: Image.network(CONFIG.SERVER +
+                                          _productList[index]['picture']),
                                     ),
-                                  ),
+                                    Text(
+                                      _productList[index]['productName'],
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(_productList[index]['productType']),
+                                    Text("Qty:" +
+                                        _productList[index]['quantity']),
+                                    Text("RM " +
+                                        double.parse(
+                                                _productList[index]['price'])
+                                            .toStringAsFixed(2)),
+                                    Container(
+                                      child: ElevatedButton(
+                                        onPressed: () => {_addtocart(index)},
+                                        child: Text("Add to Cart"),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                        ],
                       );
                     });
               }))
@@ -230,7 +221,7 @@ class _MyHomePageState extends State<MyHomePage> {
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
-              _loadCart();
+          _loadCart();
         }
       });
     }
