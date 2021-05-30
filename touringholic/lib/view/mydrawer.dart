@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:touringholic/model/user.dart';
 import 'package:touringholic/view/mainscreen.dart';
+import 'package:touringholic/view/prelovedscreen.dart';
 import 'touringgramscreen.dart';
 
 class MyDrawer extends StatefulWidget {
@@ -60,6 +61,13 @@ class _MyDrawerState extends State<MyDrawer> {
             trailing: Icon(Icons.arrow_forward),
             onTap: () {
               Navigator.pop(context);
+
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (content) => PrelovedScreen(
+                            user: widget.user,curtab: 0,
+                          )));
             }),
         ListTile(
             title: Text("My Tour"),

@@ -50,6 +50,12 @@ class _TabYourGramsState extends State<TabYourGrams> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                         Center(
+                            child: Text(
+                          "YOUR GRAMS",
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
+                        )),
                         Flexible(
                             flex: 9,
                              child: ListView.builder(
@@ -175,7 +181,7 @@ class _TabYourGramsState extends State<TabYourGrams> {
                                                       child: Row(
                                                         children: <Widget>[
                                                           Text(
-                                                            '',
+                                                            _userlistgrams[index]['numcomments'].toString(),
                                                             style: TextStyle(
                                                               color: Theme.of(
                                                                       context)

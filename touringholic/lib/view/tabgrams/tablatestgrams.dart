@@ -56,6 +56,12 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        Center(
+                            child: Text(
+                          "LATEST GRAMS",
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
+                        )),
                         Flexible(
                             flex: 9,
                             child: ListView.builder(
@@ -84,7 +90,8 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
                                                           image: new DecorationImage(
                                                               fit: BoxFit.cover,
                                                               image: new NetworkImage(
-                                                                  CONFIG.SERVER +"/touringholic/images/profileimages/default.png")))),
+                                                                  CONFIG.SERVER +
+                                                                      "/touringholic/images/profileimages/default.png")))),
                                                 ),
                                                 Expanded(
                                                     flex: 6,
@@ -146,8 +153,8 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
                                               height: screenWidth / 1.8,
                                               width: screenWidth / 0.5,
                                               child: CachedNetworkImage(
-                                                imageUrl:
-                                                    CONFIG.SERVER +"/touringholic/images/gram_pictures/${_userlistgrams[index]['gramid']}.png",
+                                                imageUrl: CONFIG.SERVER +
+                                                    "/touringholic/images/gram_pictures/${_userlistgrams[index]['gramid']}.png",
                                                 fit: BoxFit.cover,
                                                 placeholder: (context, url) =>
                                                     new Transform.scale(
@@ -174,7 +181,10 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
                                                       child: Row(
                                                         children: <Widget>[
                                                           Text(
-                                                            '',
+                                                            _userlistgrams[
+                                                                        index][
+                                                                    'numcomments']
+                                                                .toString(),
                                                             style: TextStyle(
                                                               color: Theme.of(
                                                                       context)
@@ -305,8 +315,7 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
 
   void _loadGrams() {
     print(_pageno);
-    http.post(
-        Uri.parse(CONFIG.SERVER +"/touringholic/php/load_usergrams.php"),
+    http.post(Uri.parse(CONFIG.SERVER + "/touringholic/php/load_usergrams.php"),
         body: {
           "pageno": _pageno.toString(),
         }).then((response) {
@@ -324,7 +333,6 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
   }
 
   Future<void> loadCommentDialog(int index) async {
-
     listComments = await loadComment(index);
 
     TextEditingController txtCommentCtrl = new TextEditingController();
@@ -431,8 +439,7 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
     print(widget.user.email);
     print(_userlistgrams[index]['gramid']);
 
-    http.post(
-        Uri.parse(CONFIG.SERVER +"/touringholic/php/insert_comment.php"),
+    http.post(Uri.parse(CONFIG.SERVER + "/touringholic/php/insert_comment.php"),
         body: {
           "gram_id": _userlistgrams[index]['gramid'],
           "gram_owner": _userlistgrams[index]['user_email'],
@@ -464,8 +471,7 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
   }
 
   Future<List> loadComment(int index) async => http.post(
-          Uri.parse(
-              CONFIG.SERVER +"/touringholic/php/load_comments.php"),
+          Uri.parse(CONFIG.SERVER + "/touringholic/php/load_comments.php"),
           body: {
             "gramid": _userlistgrams[index]['gramid'],
           }).then((response) {
@@ -482,8 +488,7 @@ class _TabLatestGramsState extends State<TabLatestGrams> {
       });
 
   Future<List> loadCommentInner(int index, newSetState) async => http.post(
-          Uri.parse(
-              CONFIG.SERVER +"/touringholic/php/load_comments.php"),
+          Uri.parse(CONFIG.SERVER + "/touringholic/php/load_comments.php"),
           body: {
             "gramid": _userlistgrams[index]['gramid'],
           }).then((response) {
