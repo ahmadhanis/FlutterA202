@@ -38,6 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late SharedPreferences prefs;
   String email = "";
   int cartitem = 0;
+  TextEditingController _srcController = new TextEditingController();
 
   @override
   void initState() {
@@ -52,6 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('Simple ESHOP'),
         actions: [
@@ -75,10 +77,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Column(
                   children: [
                     TextFormField(
+                      controller: _srcController,
                       decoration: InputDecoration(
                         hintText: "Search product",
                         suffixIcon: IconButton(
-                          onPressed: () => null,
+                          onPressed: () => _loadProduct(_srcController.text),
                           icon: Icon(Icons.search),
                         ),
                         border: OutlineInputBorder(
@@ -129,7 +132,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                           _productList[index]['picture']),
                                     ),
                                     Text(
-                                      _productList[index]['productName'],
+                                      titleSub(
+                                          _productList[index]['productName']),
                                       style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold),
@@ -179,9 +183,9 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {}
   }
 
-  _loadProduct() {
+  _loadProduct(String prname) {
     http.post(Uri.parse(CONFIG.SERVER + "/myshopweb/mobile/loadproducts.php"),
-        body: {"test": "abc"}).then((response) {
+        body: {"prname": prname}).then((response) {
       if (response.body == "nodata") {
         _titlecenter = "No product";
         _productList = [];
@@ -203,6 +207,7 @@ class _MyHomePageState extends State<MyHomePage> {
       String prid = _productList[index]['productId'];
       http.post(Uri.parse(CONFIG.SERVER + "/myshopweb/mobile/insertcart.php"),
           body: {"email": email, "prid": prid}).then((response) {
+        print(response.body);
         if (response.body == "failed") {
           Fluttertoast.showToast(
               msg: "Failed",
@@ -225,35 +230,27 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       });
     }
-
-    // int qty = int.parse(_productList[index]['quantity']);
-    // if (qty == 0) {
-    //   Fluttertoast.showToast(
-    //       msg: "Quantity not available",
-    //       toastLength: Toast.LENGTH_SHORT,
-    //       gravity: ToastGravity.CENTER,
-    //       timeInSecForIosWeb: 1,
-    //       backgroundColor: Colors.red,
-    //       textColor: Colors.white,
-    //       fontSize: 16.0);
-    // } else {
-    //   Fluttertoast.showToast(
-    //       msg: "Added to cart",
-    //       toastLength: Toast.LENGTH_SHORT,
-    //       gravity: ToastGravity.CENTER,
-    //       timeInSecForIosWeb: 1,
-    //       backgroundColor: Colors.red,
-    //       textColor: Colors.white,
-    //       fontSize: 16.0);
-    // }
   }
 
-  _goToCart() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => CartPage(),
-      ),
-    );
+  _goToCart() async {
+    if (email == "") {
+      Fluttertoast.showToast(
+          msg: "Please set your email first",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Color.fromRGBO(191, 30, 46, 50),
+          textColor: Colors.white,
+          fontSize: 16.0);
+      _loademaildialog();
+    } else {
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => CartPage(email: email),
+        ),
+      );
+      _loadProduct("all");
+    }
   }
 
   void _loademaildialog() {
@@ -327,7 +324,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _testasync() async {
     await _loadPref();
-    _loadProduct();
+    _loadProduct("all");
     _loadCart();
   }
 }
