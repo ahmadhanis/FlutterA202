@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:simple_eshop/checkoutpage.dart';
 
 import 'config.dart';
 
@@ -149,7 +150,9 @@ class _CartPageState extends State<CartPage> {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        _payDialog();
+                      },
                       child: Text("PAY NOW"),
                     )
                   ],
@@ -274,5 +277,50 @@ class _CartPageState extends State<CartPage> {
                       }),
                 ]),
         context: context);
+  }
+
+  void _payDialog() {
+    if (_totalprice == 0.0) {
+      Fluttertoast.showToast(
+          msg: "Amount not payable",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return;
+    } else {
+      showDialog(
+          builder: (context) => new AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                  title: new Text(
+                    'Proceed with payment?',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text("Yes"),
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => CheckOutPage(
+                                email: widget.email, total: _totalprice),
+                          ),
+                        );
+                      },
+                    ),
+                    TextButton(
+                        child: Text("No"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        }),
+                  ]),
+          context: context);
+    }
   }
 }

@@ -24,9 +24,12 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  date_format: ^2.0.2
+  flutter_datetime_picker: ^1.5.1
   flutter_staggered_grid_view: ^0.4.0
   fluttertoast: ^8.0.7
   http: ^0.13.3
+  intl: ^0.17.0
   nanoid: ^1.0.0
   shared_preferences: ^2.0.6
 
