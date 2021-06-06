@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:simple_eshop/checkoutpage.dart';
-
 import 'config.dart';
 
 class CartPage extends StatefulWidget {
@@ -153,7 +152,7 @@ class _CartPageState extends State<CartPage> {
                       onPressed: () {
                         _payDialog();
                       },
-                      child: Text("PAY NOW"),
+                      child: Text("CHECKOUT"),
                     )
                   ],
                 )),
@@ -296,7 +295,7 @@ class _CartPageState extends State<CartPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10.0))),
                   title: new Text(
-                    'Proceed with payment?',
+                    'Proceed with checkout?',
                     style: TextStyle(
                       color: Colors.black,
                     ),
