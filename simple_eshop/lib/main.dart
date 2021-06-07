@@ -3,6 +3,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ndialog/ndialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cartpage.dart';
 import 'config.dart';
@@ -74,22 +75,28 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             Container(
                 padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
-                child: Column(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    TextFormField(
-                      controller: _srcController,
-                      decoration: InputDecoration(
-                        hintText: "Search product",
-                        suffixIcon: IconButton(
-                          onPressed: () => _loadProduct(_srcController.text),
-                          icon: Icon(Icons.search),
+                    Container(
+                      height: 50,
+                      width: screenWidth / 1.5,
+                      child: TextFormField(
+                        style: TextStyle(fontSize: 14),
+                        controller: _srcController,
+                        decoration: InputDecoration(
+                          hintText: "Search product",
+                          suffixIcon: IconButton(
+                            onPressed: () => _loadProduct(_srcController.text),
+                            icon: Icon(Icons.search),
+                          ),
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              borderSide: BorderSide(color: Colors.white24)),
                         ),
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
-                            borderSide: BorderSide(color: Colors.white24)),
                       ),
-                    )
+                    ),
                   ],
                 )),
             if (_productList.isEmpty)
@@ -111,6 +118,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           Container(
                             //color: Colors.red,
                             child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
                               elevation: 10,
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -138,7 +148,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    Text(_productList[index]['productType']),
+                                    Text(_productList[index]['productType'][0]
+                                            .toUpperCase() +
+                                        _productList[index]['productType']
+                                            .substring(1)),
                                     Text("Qty:" +
                                         _productList[index]['quantity']),
                                     Text("RM " +
@@ -200,10 +213,14 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  _addtocart(int index) {
+  _addtocart(int index) async {
     if (email == '') {
       _loademaildialog();
     } else {
+      ProgressDialog progressDialog = ProgressDialog(context,
+          message: Text("Add to cart"), title: Text("Progress..."));
+      progressDialog.show();
+      await Future.delayed(Duration(seconds: 1));
       String prid = _productList[index]['productId'];
       http.post(Uri.parse(CONFIG.SERVER + "/myshopweb/mobile/insertcart.php"),
           body: {"email": email, "prid": prid}).then((response) {
@@ -229,6 +246,7 @@ class _MyHomePageState extends State<MyHomePage> {
           _loadCart();
         }
       });
+      progressDialog.dismiss();
     }
   }
 

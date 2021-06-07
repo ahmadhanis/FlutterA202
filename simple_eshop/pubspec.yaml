@@ -30,9 +30,11 @@ dependencies:
   fluttertoast: ^8.0.7
   geocoding: ^2.0.0
   geolocator: ^7.0.3
+  google_maps_flutter: ^2.0.6
   http: ^0.13.3
   intl: ^0.17.0
   nanoid: ^1.0.0
+  ndialog: ^4.1.0
   shared_preferences: ^2.0.6
 
 dev_dependencies:

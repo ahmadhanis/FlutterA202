@@ -4,6 +4,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:ndialog/ndialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:simple_eshop/delivery.dart';
+
+import 'mappage.dart';
 
 class CheckOutPage extends StatefulWidget {
   final String email;
@@ -30,27 +35,67 @@ class _CheckOutPageState extends State<CheckOutPage> {
   TextEditingController _userlocctrl = new TextEditingController();
   String address = "";
   late double screenHeight, screenWidth;
+  late SharedPreferences prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = new DateTime.now();
+    _curtime = DateFormat("Hm").format(now);
+    int cm = _convMin(_curtime);
+    _selectedtime = _minToTime(cm);
+    _loadPref();
+  }
+
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     final now = new DateTime.now();
-    String today = DateFormat('dd/MM/yyyy hh:mm a').format(now);
+    String today = DateFormat('hh:mm a').format(now);
+    String todaybanner = DateFormat('dd/MM/yyyy').format(now);
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text('Payment Checkout'),
+        backgroundColor: Color(0x44000000),
       ),
       body: Column(
         children: [
           Expanded(
               flex: 3,
-              child: Container(
-                width: screenWidth,
-                color: Colors.red,
-                child: Image.asset(
-                  'assets/images/checkout.jpg',
-                  fit: BoxFit.fitWidth,
-                ),
+              child: Stack(
+                children: [
+                  Container(
+                    width: screenWidth,
+                    color: Colors.red,
+                    child: Image.asset(
+                      'assets/images/checkout.jpg',
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0.0,
+                    right: 0.0,
+                    left: 0.0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Container(
+                              child: Text(
+                            todaybanner,
+                            style: TextStyle(
+                                fontSize: 24,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          )),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               )),
           SizedBox(height: 5),
           Divider(
@@ -60,6 +105,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
           Expanded(
             flex: 7,
             child: ListView(
+              padding: EdgeInsets.only(top: 0),
               children: [
                 Container(
                   margin: EdgeInsets.all(2),
@@ -282,7 +328,21 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                       Container(
                                         width: 150,
                                         child: ElevatedButton(
-                                          onPressed: () => {},
+                                          onPressed: () async {
+                                            Delivery _del = 
+                                            await Navigator.of(context)
+                                                    .push(
+                                              MaterialPageRoute(
+                                                builder: (context) => MapPage(),
+                                              ),
+                                            );
+                                            print(address);
+                                            setState(() {
+                                              _userlocctrl.text = _del.address;
+                                              
+
+                                            });
+                                          },
                                           child: Text("Map"),
                                         ),
                                       ),
@@ -315,9 +375,13 @@ class _CheckOutPageState extends State<CheckOutPage> {
                           fontWeight: FontWeight.bold,
                           color: Colors.red),
                     ),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: Text("PAY NOW"),
+                    
+                    Container(
+                      width: screenWidth/2.5,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        child: Text("PAY NOW"),
+                      ),
                     )
                   ],
                 ))
@@ -337,7 +401,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
           _delivery = "Pickup";
           _statusdel = false;
           _statuspickup = true;
-
+          setPickupExt();
           break;
         case 1:
           _delivery = "Delivery";
@@ -347,6 +411,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
       }
       print(_delivery);
     });
+  }
+
+  void setPickupExt() {
+    final now = new DateTime.now();
+    _curtime = DateFormat("Hm").format(now);
+    int cm = _convMin(_curtime);
+    _selectedtime = _minToTime(cm);
+    setState(() {});
   }
 
   Future<Null> _selectTime(BuildContext context) async {
@@ -434,6 +506,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
                     onPressed: () async {
                       Navigator.of(context).pop();
                       _name = nameController.text;
+                      prefs = await SharedPreferences.getInstance();
+                      await prefs.setString("name", _name);
                       setState(() {});
                     },
                   ),
@@ -465,6 +539,10 @@ class _CheckOutPageState extends State<CheckOutPage> {
                     onPressed: () async {
                       Navigator.of(context).pop();
                       _phone = phoneController.text;
+
+                      prefs = await SharedPreferences.getInstance();
+                      await prefs.setString("phone", _phone);
+
                       setState(() {});
                     },
                   ),
@@ -472,11 +550,22 @@ class _CheckOutPageState extends State<CheckOutPage> {
         context: context);
   }
 
+  Future<void> _loadPref() async {
+    prefs = await SharedPreferences.getInstance();
+    _name = prefs.getString("name") ?? 'Click to set';
+    _phone = prefs.getString("phone") ?? 'Click to set';
+    setState(() {});
+  }
+
   _getUserCurrentLoc() async {
+    ProgressDialog progressDialog = ProgressDialog(context,
+        message: Text("Searching address"), title: Text("Locating..."));
+    progressDialog.show();
     await _determinePosition().then((value) => {_getPlace(value)});
     setState(
       () {},
     );
+    progressDialog.dismiss();
   }
 
   void _getPlace(Position pos) async {

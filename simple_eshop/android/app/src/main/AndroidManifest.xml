@@ -8,6 +8,8 @@
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
         >
+    <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyAvIHhXiQ7TxWE2L7WY_qP2WpBDrR7TWHk"/>
+    <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

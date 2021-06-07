@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:ndialog/ndialog.dart';
 import 'package:simple_eshop/checkoutpage.dart';
 import 'config.dart';
 
@@ -187,7 +188,11 @@ class _CartPageState extends State<CartPage> {
     });
   }
 
-  void _modQty(int index, String s) {
+  Future<void> _modQty(int index, String s) async {
+     ProgressDialog progressDialog = ProgressDialog(context,
+        message: Text("Update cart"), title: Text("Progress..."));
+    progressDialog.show();
+    await Future.delayed(Duration(seconds: 1));
     http.post(Uri.parse(CONFIG.SERVER + "/myshopweb/mobile/updatecart.php"),
         body: {
           "email": widget.email,
@@ -216,10 +221,15 @@ class _CartPageState extends State<CartPage> {
             textColor: Colors.white,
             fontSize: 16.0);
       }
+      progressDialog.dismiss();
     });
   }
 
-  void _deleteCart(int index) {
+  Future<void> _deleteCart(int index) async {
+    ProgressDialog progressDialog = ProgressDialog(context,
+        message: Text("Delete from cart"), title: Text("Progress..."));
+    progressDialog.show();
+    await Future.delayed(Duration(seconds: 1));
     http.post(Uri.parse(CONFIG.SERVER + "/myshopweb/mobile/deletecart.php"),
         body: {
           "email": widget.email,
@@ -236,7 +246,6 @@ class _CartPageState extends State<CartPage> {
             textColor: Colors.white,
             fontSize: 16.0);
         _loadMyCart();
-        return;
       } else {
         Fluttertoast.showToast(
             msg: "Failed",
@@ -247,6 +256,7 @@ class _CartPageState extends State<CartPage> {
             textColor: Colors.white,
             fontSize: 16.0);
       }
+      progressDialog.dismiss();
     });
   }
 
