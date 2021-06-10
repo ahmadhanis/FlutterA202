@@ -7,6 +7,8 @@ import 'package:geocoding/geocoding.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_eshop/delivery.dart';
+import 'package:simple_eshop/payment.dart';
+import 'package:simple_eshop/user.dart';
 
 import 'mappage.dart';
 
@@ -329,8 +331,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                         width: 150,
                                         child: ElevatedButton(
                                           onPressed: () async {
-                                            Delivery _del = 
-                                            await Navigator.of(context)
+                                            Delivery _del =
+                                                await Navigator.of(context)
                                                     .push(
                                               MaterialPageRoute(
                                                 builder: (context) => MapPage(),
@@ -339,8 +341,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
                                             print(address);
                                             setState(() {
                                               _userlocctrl.text = _del.address;
-                                              
-
                                             });
                                           },
                                           child: Text("Map"),
@@ -375,11 +375,12 @@ class _CheckOutPageState extends State<CheckOutPage> {
                           fontWeight: FontWeight.bold,
                           color: Colors.red),
                     ),
-                    
                     Container(
-                      width: screenWidth/2.5,
+                      width: screenWidth / 2.5,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _paynowDialog();
+                        },
                         child: Text("PAY NOW"),
                       ),
                     )
@@ -616,5 +617,39 @@ class _CheckOutPageState extends State<CheckOutPage> {
     }
 
     return await Geolocator.getCurrentPosition();
+  }
+
+  void _paynowDialog() {
+    showDialog(
+        builder: (context) => new AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                title: new Text(
+                  'Pay RM ' + widget.total.toStringAsFixed(2) + "?",
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text("Yes"),
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                      User _user = new User(
+                          widget.email, _phone, _name, widget.total.toString());
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => PayScreen(user: _user),
+                        ),
+                      );
+                    },
+                  ),
+                  TextButton(
+                      child: Text("No"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      }),
+                ]),
+        context: context);
   }
 }

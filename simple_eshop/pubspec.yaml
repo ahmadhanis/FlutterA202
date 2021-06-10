@@ -36,6 +36,7 @@ dependencies:
   nanoid: ^1.0.0
   ndialog: ^4.1.0
   shared_preferences: ^2.0.6
+  webview_flutter: ^2.0.8
 
 dev_dependencies:
   flutter_test:

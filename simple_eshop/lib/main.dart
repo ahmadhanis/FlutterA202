@@ -53,127 +53,129 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: Text('Simple ESHOP'),
-        actions: [
-          TextButton.icon(
-              onPressed: () => {_goToCart()},
-              icon: Icon(
-                Icons.shopping_cart,
-                color: Colors.white,
-              ),
-              label: Text(
-                cartitem.toString(),
-                style: TextStyle(color: Colors.white),
-              )),
-        ],
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            Container(
-                padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Container(
-                      height: 50,
-                      width: screenWidth / 1.5,
-                      child: TextFormField(
-                        style: TextStyle(fontSize: 14),
-                        controller: _srcController,
-                        decoration: InputDecoration(
-                          hintText: "Search product",
-                          suffixIcon: IconButton(
-                            onPressed: () => _loadProduct(_srcController.text),
-                            icon: Icon(Icons.search),
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: Text('Simple ESHOP'),
+          actions: [
+            TextButton.icon(
+                onPressed: () => {_goToCart()},
+                icon: Icon(
+                  Icons.shopping_cart,
+                  color: Colors.white,
+                ),
+                label: Text(
+                  cartitem.toString(),
+                  style: TextStyle(color: Colors.white),
+                )),
+          ],
+        ),
+        body: Center(
+          child: Column(
+            children: [
+              Container(
+                  padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                        height: 50,
+                        width: screenWidth / 1.5,
+                        child: TextFormField(
+                          style: TextStyle(fontSize: 14),
+                          controller: _srcController,
+                          decoration: InputDecoration(
+                            hintText: "Search product",
+                            suffixIcon: IconButton(
+                              onPressed: () => _loadProduct(_srcController.text),
+                              icon: Icon(Icons.search),
+                            ),
+                            border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                borderSide: BorderSide(color: Colors.white24)),
                           ),
-                          border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                              borderSide: BorderSide(color: Colors.white24)),
                         ),
                       ),
-                    ),
-                  ],
-                )),
-            if (_productList.isEmpty)
-              Flexible(child: Center(child: Text(_titlecenter)))
-            else
-              Flexible(
-                  child: OrientationBuilder(builder: (context, orientation) {
-                return StaggeredGridView.countBuilder(
-                    padding: EdgeInsets.all(10),
-                    crossAxisCount: orientation == Orientation.portrait ? 2 : 4,
-                    itemCount: _productList.length,
-                    staggeredTileBuilder: (int index) =>
-                        new StaggeredTile.fit(1),
-                    mainAxisSpacing: 4.0,
-                    crossAxisSpacing: 4.0,
-                    itemBuilder: (BuildContext ctxt, int index) {
-                      return Column(
-                        children: [
-                          Container(
-                            //color: Colors.red,
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              elevation: 10,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      height:
-                                          orientation == Orientation.portrait
-                                              ? 100
-                                              : 150,
-                                      width: orientation == Orientation.portrait
-                                          ? 100
-                                          : 150,
-                                      child: Image.network(CONFIG.SERVER +
-                                          _productList[index]['picture']),
-                                    ),
-                                    Text(
-                                      titleSub(
-                                          _productList[index]['productName']),
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(_productList[index]['productType'][0]
-                                            .toUpperCase() +
-                                        _productList[index]['productType']
-                                            .substring(1)),
-                                    Text("Qty:" +
-                                        _productList[index]['quantity']),
-                                    Text("RM " +
-                                        double.parse(
-                                                _productList[index]['price'])
-                                            .toStringAsFixed(2)),
-                                    Container(
-                                      child: ElevatedButton(
-                                        onPressed: () => {_addtocart(index)},
-                                        child: Text("Add to Cart"),
+                    ],
+                  )),
+              if (_productList.isEmpty)
+                Flexible(child: Center(child: Text(_titlecenter)))
+              else
+                Flexible(
+                    child: OrientationBuilder(builder: (context, orientation) {
+                  return StaggeredGridView.countBuilder(
+                      padding: EdgeInsets.all(10),
+                      crossAxisCount: orientation == Orientation.portrait ? 2 : 4,
+                      itemCount: _productList.length,
+                      staggeredTileBuilder: (int index) =>
+                          new StaggeredTile.fit(1),
+                      mainAxisSpacing: 4.0,
+                      crossAxisSpacing: 4.0,
+                      itemBuilder: (BuildContext ctxt, int index) {
+                        return Column(
+                          children: [
+                            Container(
+                              //color: Colors.red,
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                elevation: 10,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        height:
+                                            orientation == Orientation.portrait
+                                                ? 100
+                                                : 150,
+                                        width: orientation == Orientation.portrait
+                                            ? 100
+                                            : 150,
+                                        child: Image.network(CONFIG.SERVER +
+                                            _productList[index]['picture']),
                                       ),
-                                    ),
-                                  ],
+                                      Text(
+                                        titleSub(
+                                            _productList[index]['productName']),
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(_productList[index]['productType'][0]
+                                              .toUpperCase() +
+                                          _productList[index]['productType']
+                                              .substring(1)),
+                                      Text("Qty:" +
+                                          _productList[index]['quantity']),
+                                      Text("RM " +
+                                          double.parse(
+                                                  _productList[index]['price'])
+                                              .toStringAsFixed(2)),
+                                      Container(
+                                        child: ElevatedButton(
+                                          onPressed: () => {_addtocart(index)},
+                                          child: Text("Add to Cart"),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    });
-              }))
-          ],
+                          ],
+                        );
+                      });
+                }))
+            ],
+          ),
         ),
       ),
     );
