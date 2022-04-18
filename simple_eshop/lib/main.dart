@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ndialog/ndialog.dart';
@@ -16,7 +17,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Simple Eshop',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        textTheme: GoogleFonts.latoTextTheme(
+          Theme.of(context).textTheme,
+        ),
       ),
       home: MyHomePage(title: 'Simple EShop'),
     );
@@ -79,22 +82,26 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Container(
-                        height: 50,
-                        width: screenWidth / 1.5,
-                        child: TextFormField(
-                          style: TextStyle(fontSize: 14),
-                          controller: _srcController,
-                          decoration: InputDecoration(
-                            hintText: "Search product",
-                            suffixIcon: IconButton(
-                              onPressed: () => _loadProduct(_srcController.text),
-                              icon: Icon(Icons.search),
+                      Flexible(
+                        child: Container(
+                          height: 50,
+                          width: screenWidth / 1,
+                          child: TextFormField(
+                            style: TextStyle(fontSize: 14),
+                            controller: _srcController,
+                            decoration: InputDecoration(
+                              hintText: "Search product",
+                              suffixIcon: IconButton(
+                                onPressed: () =>
+                                    _loadProduct(_srcController.text),
+                                icon: Icon(Icons.search),
+                              ),
+                              border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0)),
+                                  borderSide:
+                                      BorderSide(color: Colors.white24)),
                             ),
-                            border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.white24)),
                           ),
                         ),
                       ),
@@ -107,7 +114,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: OrientationBuilder(builder: (context, orientation) {
                   return StaggeredGridView.countBuilder(
                       padding: EdgeInsets.all(10),
-                      crossAxisCount: orientation == Orientation.portrait ? 2 : 4,
+                      crossAxisCount:
+                          orientation == Orientation.portrait ? 2 : 4,
                       itemCount: _productList.length,
                       staggeredTileBuilder: (int index) =>
                           new StaggeredTile.fit(1),
@@ -136,9 +144,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                             orientation == Orientation.portrait
                                                 ? 100
                                                 : 150,
-                                        width: orientation == Orientation.portrait
-                                            ? 100
-                                            : 150,
+                                        width:
+                                            orientation == Orientation.portrait
+                                                ? 100
+                                                : 150,
                                         child: Image.network(CONFIG.SERVER +
                                             _productList[index]['picture']),
                                       ),

@@ -24,6 +24,7 @@ class _PayScreenState extends State<PayScreen> {
       ),
       body: Center(
         child: Container(
+
           child: Column(
             children: [
               Expanded(
